@@ -1,0 +1,95 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg"
+    android:padding="16dp">
+
+    <TimePicker
+        android:id="@+id/time_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button2"
+        android:calendarViewShown="false"
+        android:spinnersShown="true"
+        android:timePickerMode="spinner"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="30dp"
+        android:theme="@style/MyTimePickerDivider"/>
+
+    <LinearLayout
+        android:id="@+id/stretching_layout"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:orientation="vertical"
+        android:background="@drawable/button2"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/time_picker">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="스트레칭 설정"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="10dp" />
+
+        <Spinner
+            android:paddingLeft="10dp"
+            android:id="@+id/stretching_option_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/select_stretching_option"
+            android:theme="@style/MyTimePickerDivider"/>
+
+        <TextView
+            android:paddingLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="초기 갯수 입력"
+            android:layout_marginTop="30dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+        <EditText
+            android:paddingLeft="10dp"
+            android:id="@+id/st_count_init"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="초기 갯수를 입력하세요"
+            android:inputType="number"
+            android:text="5"
+            android:theme="@style/MyTimePickerDivider"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/set_alarm_btn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="저장"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:background="@drawable/button2"
+        app:layout_constraintBottom_toTopOf="@+id/cancel_alarm_btn"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/your_checked_color"/>
+    <Button
+        android:id="@+id/cancel_alarm_btn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/button2"
+        android:text="취소"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:backgroundTint="@color/your_checked_color"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/bg"
+    >
+
+    <!-- 알람 시간을 표시하는 TextView -->
+    <TextView
+        android:id="@+id/alarm_time_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="64sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="00:00"/>
+
+    <!-- AM / PM 표시하는 TextView -->
+    <TextView
+        android:id="@+id/ampm_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="AM"
+        />
+
+    <!-- 알람 설정 버튼 -->
+    <Button
+        android:id="@+id/set_alarm_btn"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:text="알람 추가"
+        android:textSize="25dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button"
+        android:backgroundTint="#FF00DD9B"
+        android:layout_marginTop="10dp"
+        />
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="3dp"
+    />
+    <!-- 알람 취소 버튼 -->
+    <Button
+        android:id="@+id/timer_btn"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:text="타 이 머"
+        android:textSize="25dp"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:background="@drawable/button"
+        android:backgroundTint="#FF00DD9B"
+        android:layout_marginTop="5dp"
+        />
+
+
+    <!-- 알람 목록을 표시하는 ListView -->
+    <ListView
+        android:id="@+id/alarm_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
+
+
+

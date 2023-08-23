@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button2"
+        android:orientation="vertical"
+        android:padding="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=" Stop watch "
+                android:textSize="40dp"
+                android:textColor="@color/your_checked_color"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/T_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="00:00:00:00"
+            android:textSize="50dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/your_checked_color"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="right"
+            >
+
+
+            <Button
+                android:id="@+id/T_delete_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22dp"
+                android:text="초기화"
+                android:backgroundTint="@color/your_checked_color"
+                android:textColor="@color/white"/>
+            <Button
+                android:id="@+id/T_start_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22dp"
+                android:text="시  작"
+                android:backgroundTint="@color/your_checked_color"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

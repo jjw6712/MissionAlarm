@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="3dp"
+    android:longClickable="true">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/button2"
+    android:padding="30dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp">
+    <!-- 알람 시간을 표시하는 TextView -->
+    <TextView
+        android:id="@+id/time_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="24sp"
+        android:layout_gravity="center"/>
+
+    <!-- 알람 취소 버튼 -->
+    <Switch
+        android:id="@+id/switch_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:thumbTint="@color/your_checked_color"
+        android:trackTint="@color/statusBarColor"
+        android:textOff="알람 꺼짐"
+        android:textOn="알람 켜짐"
+        android:layout_gravity="center"/>
+</LinearLayout>
+
+
+</LinearLayout>

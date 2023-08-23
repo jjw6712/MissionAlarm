@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarm_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@drawable/bg"
+    >
+
+    <TextView
+        android:id="@+id/alarm_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="00:00"
+        android:textColor="#FFFFFF"
+        android:textSize="100sp" />
+
+    <TextView
+        android:id="@+id/alarm_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="일어나세요"
+        android:textColor="#FFFFFF"
+        android:textSize="40sp"
+        android:layout_below="@+id/alarm_time_tv"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/stop_button"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/alarm_text"
+        android:layout_marginTop="400dp"
+        android:text="스트레칭 하기"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="25dp"
+        android:backgroundTint="#FF4081"
+        android:background="@drawable/button"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
