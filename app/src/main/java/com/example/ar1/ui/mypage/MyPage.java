@@ -97,9 +97,9 @@ public class MyPage extends Fragment {
 
             List<String> itemList = new ArrayList<>();
             // 아이템 리스트에 버튼에 표시할 내용 추가
-            itemList.add("내정보");
+            itemList.add("내계정");
             itemList.add("설정");
-            itemList.add("개발자 노트");
+            itemList.add("개발자노트");
             itemList.add("로그아웃");
 
             MyPageListAdapter adapter = new MyPageListAdapter(getActivity(), itemList);

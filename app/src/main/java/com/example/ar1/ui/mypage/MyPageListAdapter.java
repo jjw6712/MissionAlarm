@@ -45,7 +45,7 @@ public class MyPageListAdapter extends ArrayAdapter<String> {
         itemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ("개발자 노트".equals(currentItem)) { //개발자 노트 버튼 클릭 이벤트 처리
+                if ("개발자노트".equals(currentItem)) { //개발자 노트 버튼 클릭 이벤트 처리
                     Intent intent = new Intent(context, WebViewActivity.class); // WebView를 표시하는 액티비티
                     context.startActivity(intent);
                 } else if ("로그아웃".equals(currentItem)) {
