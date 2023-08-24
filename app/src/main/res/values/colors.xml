@@ -15,6 +15,6 @@
     <color name="circleColor">#FF4081</color>
     <color name="your_checked_color">#FF00DD9B</color>
     <color name="your_unchecked_color">#3A3939</color>
-    <color name="statusBarColor">#3A3939</color>
+    <color name="statusBarColor">#575757</color>
 
 </resources>

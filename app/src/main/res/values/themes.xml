@@ -13,6 +13,7 @@
         <item name="android:statusBarColor">@color/statusBarColor</item>
         <!-- Customize your theme here. -->
     </style>
+
     <style name="MyBottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="itemIconTint">@color/bottom_nav_icon_color</item>
         <item name="itemTextColor">@color/bottom_nav_icon_color</item>
