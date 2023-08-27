@@ -82,6 +82,12 @@ public class MyInfoListAdapter extends ArrayAdapter<String> {
                 if("이름".equals(currentItem)) {
                     Intent intent = new Intent(context, ChangeNameActivity.class);
                     ((Activity) context).startActivityForResult(intent, MyInfoActivity.REQUEST_CODE_CHANGE_NAME);
+                } else if ("아이디".equals(currentItem)) {
+                    Intent intent = new Intent(context, ChangeIDActivity.class);
+                    ((Activity) context).startActivityForResult(intent, MyInfoActivity.REQUEST_CODE_CHANGE_ID);
+                } else if ("번호".equals(currentItem)) {
+                    Intent intent = new Intent(context, ChangePHActivity.class);
+                    ((Activity) context).startActivityForResult(intent, MyInfoActivity.REQUEST_CODE_CHANGE_PH);
                 }
             }
         });

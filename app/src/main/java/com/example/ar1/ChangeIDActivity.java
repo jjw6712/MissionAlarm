@@ -27,8 +27,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ChangeNameActivity extends AppCompatActivity {
-
+public class ChangeIDActivity extends AppCompatActivity {
     private EditText etName;
     private ImageButton btcleartext, btBack;
     private Button btChangeName;
@@ -37,7 +36,7 @@ public class ChangeNameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_name);
+        setContentView(R.layout.activity_change_id);
 
         etName = findViewById(R.id.etName);
         btcleartext = findViewById(R.id.btcleartext);
@@ -48,32 +47,31 @@ public class ChangeNameActivity extends AppCompatActivity {
         String userName = prefs.getString("userName", null);
         String userId = prefs.getString("userId", null);
         if (userName != null) {
-            etName.setText(userName);
+            etName.setText(userId);
         }
 
         btcleartext.setOnClickListener(v -> etName.setText(""));
 
         btChangeName.setOnClickListener(v -> {
-            String newUserName = etName.getText().toString();
+            String newUserId = etName.getText().toString();
 
             // AlertDialog를 만듭니다.
             new AlertDialog.Builder(this)
-                    .setTitle("이름 변경")
-                    .setMessage("이름을 " + newUserName + "로 바꾸시겠습니까?")
+                    .setTitle("아이디 변경")
+                    .setMessage("아이디를 " + newUserId + "로 바꾸시겠습니까?")
                     .setPositiveButton("예", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // '예'를 선택했을 때 할 일
-
                             // SharedPreferences에 userName 업데이트
                             SharedPreferences.Editor editor = prefs.edit();
-                            editor.putString("userName", newUserName);
+                            editor.putString("userId", newUserId);
                             editor.apply();
 
                             // 서버에 userName 업데이트 (userId 기준)
-                            updateUserNameOnServer(userId, newUserName);
+                            updateUserIdOnServer(userId, newUserId);
 
                             Intent resultIntent = new Intent();
-                            resultIntent.putExtra("newUserName", newUserName);
+                            resultIntent.putExtra("newUserId", newUserId);
                             setResult(RESULT_OK, resultIntent);
 
                             // 액티비티 종료
@@ -96,14 +94,14 @@ public class ChangeNameActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUserNameOnServer(String userId, String userName) {
-        Log.d(TAG, "이름변경: "+userId+userName);
+    private void updateUserIdOnServer(String userId, String newUserId) {
+        Log.d(TAG, "아이디변경: "+userId+newUserId);
         OkHttpClient client = new OkHttpClient();
-        String url = "https://sw--zqbli.run.goorm.site/updateUserName";
+        String url = "https://sw--zqbli.run.goorm.site/updateUserId";
 
         RequestBody body = new FormBody.Builder()
-                .add("userId", userId)
-                .add("userName", userName)
+                .add("oldUserId", userId)
+                .add("newUserId", newUserId)
                 .build();
 
         Request request = new Request.Builder()

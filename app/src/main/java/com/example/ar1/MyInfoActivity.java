@@ -51,6 +51,8 @@ import android.Manifest;
 
 public class MyInfoActivity extends AppCompatActivity {
     static final int REQUEST_CODE_CHANGE_NAME = 1;
+    static final int REQUEST_CODE_CHANGE_ID = 2;
+    static final int REQUEST_CODE_CHANGE_PH = 3;
     int REQUEST_EXTERNAL_STORAGE_PERMISSION = 1003;
     ImageView ivUser;
     String userId, userName;
@@ -58,8 +60,6 @@ public class MyInfoActivity extends AppCompatActivity {
     ImageButton btBack;
     MyInfoListAdapter myInfoListAdapter;
     private LruCache<String, Bitmap> memoryCache; // 이미지 캐시
-
-    private static final String UPLOAD_PROFILE_URL = "https://sw--zqbli.run.goorm.site/uploadProfile";
     private static final String GET_PROFILE_URL = "https://sw--zqbli.run.goorm.site/getProfile";
 
     @Override
@@ -164,6 +164,26 @@ public class MyInfoActivity extends AppCompatActivity {
             profileName.setText(newUserName + " 님");
 
             // 기타 UI 업데이트 로직
+            if (myInfoListAdapter != null) {
+                myInfoListAdapter.notifyDataSetChanged();
+            }
+        }else if (requestCode == REQUEST_CODE_CHANGE_ID && resultCode == RESULT_OK) {
+            String newUserId = data.getStringExtra("newUserId");
+            SharedPreferences prefs = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("userId", newUserId);
+            editor.apply();
+
+            if (myInfoListAdapter != null) {
+                myInfoListAdapter.notifyDataSetChanged();
+            }
+        }else if (requestCode == REQUEST_CODE_CHANGE_PH && resultCode == RESULT_OK) {
+            String newUserPhoneNum = data.getStringExtra("newUserPhoneNum");
+            SharedPreferences prefs = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("userPhoneNum", newUserPhoneNum);
+            editor.apply();
+
             if (myInfoListAdapter != null) {
                 myInfoListAdapter.notifyDataSetChanged();
             }

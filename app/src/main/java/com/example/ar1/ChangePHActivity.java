@@ -27,7 +27,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ChangeNameActivity extends AppCompatActivity {
+public class ChangePHActivity extends AppCompatActivity {
 
     private EditText etName;
     private ImageButton btcleartext, btBack;
@@ -37,7 +37,7 @@ public class ChangeNameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_name);
+        setContentView(R.layout.activity_change_PH);
 
         etName = findViewById(R.id.etName);
         btcleartext = findViewById(R.id.btcleartext);
@@ -45,7 +45,7 @@ public class ChangeNameActivity extends AppCompatActivity {
         btBack = findViewById(R.id.btBack);
 
         SharedPreferences prefs = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-        String userName = prefs.getString("userName", null);
+        String userName = prefs.getString("userPhoneNum", null);
         String userId = prefs.getString("userId", null);
         if (userName != null) {
             etName.setText(userName);
@@ -54,26 +54,26 @@ public class ChangeNameActivity extends AppCompatActivity {
         btcleartext.setOnClickListener(v -> etName.setText(""));
 
         btChangeName.setOnClickListener(v -> {
-            String newUserName = etName.getText().toString();
+            String newUserPhoneNum = etName.getText().toString();
 
             // AlertDialog를 만듭니다.
             new AlertDialog.Builder(this)
-                    .setTitle("이름 변경")
-                    .setMessage("이름을 " + newUserName + "로 바꾸시겠습니까?")
+                    .setTitle("번호 변경")
+                    .setMessage("번호를 " + newUserPhoneNum + "로 바꾸시겠습니까?")
                     .setPositiveButton("예", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // '예'를 선택했을 때 할 일
 
                             // SharedPreferences에 userName 업데이트
                             SharedPreferences.Editor editor = prefs.edit();
-                            editor.putString("userName", newUserName);
+                            editor.putString("userPhoneNum", newUserPhoneNum);
                             editor.apply();
 
                             // 서버에 userName 업데이트 (userId 기준)
-                            updateUserNameOnServer(userId, newUserName);
+                            updateUserPHOnServer(userId, newUserPhoneNum);
 
                             Intent resultIntent = new Intent();
-                            resultIntent.putExtra("newUserName", newUserName);
+                            resultIntent.putExtra("newUserPhoneNum", newUserPhoneNum);
                             setResult(RESULT_OK, resultIntent);
 
                             // 액티비티 종료
@@ -96,14 +96,14 @@ public class ChangeNameActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUserNameOnServer(String userId, String userName) {
-        Log.d(TAG, "이름변경: "+userId+userName);
+    private void updateUserPHOnServer(String userId, String userPhoneNum) {
+        Log.d(TAG, "번호변경: "+userId+userPhoneNum);
         OkHttpClient client = new OkHttpClient();
-        String url = "https://sw--zqbli.run.goorm.site/updateUserName";
+        String url = "https://sw--zqbli.run.goorm.site/updateUserPH";
 
         RequestBody body = new FormBody.Builder()
                 .add("userId", userId)
-                .add("userName", userName)
+                .add("userPhoneNum", userPhoneNum)
                 .build();
 
         Request request = new Request.Builder()

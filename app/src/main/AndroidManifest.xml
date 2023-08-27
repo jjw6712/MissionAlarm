@@ -47,6 +47,10 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ChangePHActivity"/>
+
+        <activity android:name=".ChangeIDActivity"/>
+
         <activity android:name=".ChangeNameActivity"/>
 
         <activity android:name=".MyInfoActivity" />

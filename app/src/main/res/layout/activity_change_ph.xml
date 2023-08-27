@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.mypage.MyPage"
+    android:background="@color/white">
+
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_black"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="번호"
+        android:layout_marginTop="95dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="30dp"/>
+
+    <TextView
+        android:id="@+id/profileName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="70dp"
+        android:textSize="20sp"
+        android:text="번호 입력"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:visibility="visible"/>
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:hint="번호를 입력해 주세요"
+        android:textColor="@color/black"/>
+
+    <ImageButton
+        android:id="@+id/btcleartext"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:rotation="45"
+        android:src="@drawable/ic_clear_text"
+        android:layout_marginTop="130dp"
+        android:layout_alignRight="@+id/etName"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="미션알람계정 프로필을 설정해 주세요."
+        android:layout_marginStart="20dp"/>
+
+    <Button
+        android:id="@+id/btChangeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/etName"
+        android:layout_marginBottom="-62dp"
+        android:backgroundTint="#FF00DD9B"
+        android:padding="15dp"
+        android:text="다음"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+
+
+</RelativeLayout>
