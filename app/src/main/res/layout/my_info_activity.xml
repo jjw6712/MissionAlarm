@@ -8,6 +8,7 @@
     android:background="@color/white">
 
     <ImageButton
+        android:id="@+id/btBack"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/ic_back_black"
@@ -21,15 +22,16 @@
         android:layout_below="@+id/userProfileContainer"
         android:layout_marginTop="-76dp"
         android:text="이름"
+        android:textColor="@color/black"
         android:textSize="20sp"
-        android:textStyle="bold"
         android:layout_marginStart="120dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="미션알람계정 보를 확인하고 안전하게 관리해 주세요"
+        android:text="미션알람계정 정보를 확인하고 안전하게 관리해 주세요"
         android:layout_marginTop="90dp"
-        android:layout_marginStart="120dp"/>
+        android:layout_marginStart="120dp"
+        android:layout_marginEnd="30dp"/>
 
     <TextView
         android:id="@+id/profileName"
@@ -42,6 +44,21 @@
         android:textColor="@color/black"
         android:textStyle="bold"
         android:visibility="visible"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="150dp"
+        android:background="#DDDDDD"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="170dp"
+        android:text="계정 정보"
+        android:layout_marginStart="20dp"/>
 
     <FrameLayout
         android:id="@+id/userProfileContainer"
@@ -76,6 +93,12 @@
         android:id="@+id/buttonList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="160dp" />
+        android:layout_marginTop="200dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:background="@color/white"
+        />
 
 </RelativeLayout>

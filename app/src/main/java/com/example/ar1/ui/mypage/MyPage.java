@@ -262,4 +262,5 @@ public class MyPage extends Fragment {
         public Bitmap getBitmapFromMemCache(String key) {
             return memoryCache.get(key);
         }
+
     }

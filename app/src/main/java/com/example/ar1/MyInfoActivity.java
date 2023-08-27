@@ -21,6 +21,7 @@ import android.util.LruCache;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,12 +49,14 @@ import okhttp3.Response;
 
 import android.Manifest;
 
-class MyInfoActivity extends AppCompatActivity {
-    int REQUEST_IMAGE_CODE_USER = 1001;
+public class MyInfoActivity extends AppCompatActivity {
+    static final int REQUEST_CODE_CHANGE_NAME = 1;
     int REQUEST_EXTERNAL_STORAGE_PERMISSION = 1003;
     ImageView ivUser;
     String userId, userName;
     TextView profileName, ivUsertext;
+    ImageButton btBack;
+    MyInfoListAdapter myInfoListAdapter;
     private LruCache<String, Bitmap> memoryCache; // 이미지 캐시
 
     private static final String UPLOAD_PROFILE_URL = "https://sw--zqbli.run.goorm.site/uploadProfile";
@@ -74,6 +77,7 @@ class MyInfoActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(android.R.color.white));
 
+        btBack = findViewById(R.id.btBack);
         ivUser = findViewById(R.id.ivUser);
         ivUsertext = findViewById(R.id.ivUserText);
         profileName = findViewById(R.id.userName);
@@ -83,14 +87,18 @@ class MyInfoActivity extends AppCompatActivity {
         itemList.add("이름");
         itemList.add("아이디");
         itemList.add("번호");
+        itemList.add("성별");
 
-        MyPageListAdapter adapter = new MyPageListAdapter(this, itemList);
+        MyInfoListAdapter adapter = new MyInfoListAdapter(this, itemList);
         listView.setAdapter(adapter);
+
+        myInfoListAdapter = new MyInfoListAdapter(this, itemList); // 인스턴스 저장
+        listView.setAdapter(myInfoListAdapter);
 
         SharedPreferences preferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
         userId = preferences.getString("userId", "");
         userName = preferences.getString("userName", "");
-        profileName.setText(userName);
+        profileName.setText(userName+" 님");
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
@@ -131,59 +139,36 @@ class MyInfoActivity extends AppCompatActivity {
             });
         }
 
-        ivUser.setOnClickListener(new View.OnClickListener() {
+        btBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, REQUEST_IMAGE_CODE_USER);
+                finish();
             }
         });
     }
 
-    // 이미지 업로드
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            Uri image = data.getData();
-            File file = new File(getRealPathFromURI(image));
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("userId", userId)
-                    .addFormDataPart("image", file.getName(), RequestBody.create(MediaType.parse("image/*"), file))
-                    .build();
+        if (requestCode == REQUEST_CODE_CHANGE_NAME && resultCode == RESULT_OK) {
+            String newUserName = data.getStringExtra("newUserName");
 
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder().url(UPLOAD_PROFILE_URL).post(requestBody).build();
+            // SharedPreferences에 새로운 userName 저장
+            SharedPreferences prefs = getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("userName", newUserName);
+            editor.apply();
 
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                    final Bitmap circularBitmap = getRoundedCornerBitmap(bitmap); // 원형 이미지 변환
+            // 프로필 이름을 새로운 사용자 이름으로 업데이트
+            profileName.setText(newUserName + " 님");
 
-                    memoryCache.remove(userId);
-
-                    addBitmapToMemoryCache(userId, circularBitmap);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ivUser.setImageBitmap(circularBitmap);
-                            ivUsertext.setVisibility(View.GONE);
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-            });
+            // 기타 UI 업데이트 로직
+            if (myInfoListAdapter != null) {
+                myInfoListAdapter.notifyDataSetChanged();
+            }
         }
     }
-
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
@@ -217,9 +202,13 @@ class MyInfoActivity extends AppCompatActivity {
         return output;
     }
 
-    private void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            memoryCache.put(key, bitmap);
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (key != null && bitmap != null) {
+            if (getBitmapFromMemCache(key) == null) {
+                memoryCache.put(key, bitmap);
+            }
+        } else {
+            // key나 bitmap이 null인 경우에 대한 처리 (예: 로그 출력)
         }
     }
 

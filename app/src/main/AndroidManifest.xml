@@ -47,8 +47,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MyInfoActivity" />
+        <activity android:name=".ChangeNameActivity"/>
 
+        <activity android:name=".MyInfoActivity" />
 
         <activity android:name=".WebViewActivity" />
 

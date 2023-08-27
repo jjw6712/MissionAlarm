@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/white"
+    >
+
+    <Button
+        android:id="@+id/itemButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:gravity="left|center_vertical"
+        android:text="버튼"
+        android:textSize="15dp"
+        android:textStyle="normal" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_arrow"
+        android:padding="0dp"
+        android:background="@null"/>
+
+    <TextView
+        android:id="@+id/tvinfo"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/imageView"
+        android:gravity="right"
+        android:padding="10dp"
+        android:text="설정하기"
+        android:textColor="#4141FB"
+        android:textSize="15dp"
+        android:textStyle="normal"
+        android:visibility="visible" />
+</RelativeLayout>

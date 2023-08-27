@@ -13,8 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.example.ar1.Login;
+import com.example.ar1.MyInfoActivity;
 import com.example.ar1.R;
 import com.example.ar1.WebViewActivity;
+import com.example.ar1.databinding.MyInfoActivityBinding;
 
 import java.util.List;
 
@@ -47,6 +49,9 @@ public class MyPageListAdapter extends ArrayAdapter<String> {
             public void onClick(View view) {
                 if ("개발자노트".equals(currentItem)) { //개발자 노트 버튼 클릭 이벤트 처리
                     Intent intent = new Intent(context, WebViewActivity.class); // WebView를 표시하는 액티비티
+                    context.startActivity(intent);
+                } else if ("내계정".equals(currentItem)) {
+                    Intent intent = new Intent(context, MyInfoActivity.class);
                     context.startActivity(intent);
                 } else if ("로그아웃".equals(currentItem)) {
                     // 로그인 상태 확인
@@ -83,4 +88,5 @@ public class MyPageListAdapter extends ArrayAdapter<String> {
 
         return itemView;
     }
+
 }
