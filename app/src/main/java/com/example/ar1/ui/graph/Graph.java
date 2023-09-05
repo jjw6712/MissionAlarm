@@ -2,11 +2,14 @@ package com.example.ar1.ui.graph;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,6 +43,14 @@ public class Graph extends Fragment {
 
         binding = FragmentGraphBinding.inflate(inflater, container, false);
         View root = inflater.inflate(R.layout.activity_graph, container, false);
+
+        int color = Color.parseColor("#FFFFFF");
+        // 프래그먼트에서 상태바 색상 변경
+        if (getActivity() != null) {
+            Window window = getActivity().getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(color);
+        }
 
         tvSquatCount = root.findViewById(R.id.tvSquatCount);
         tvPushupCount = root.findViewById(R.id.tvPushupCount);

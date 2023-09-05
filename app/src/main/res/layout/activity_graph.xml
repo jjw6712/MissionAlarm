@@ -4,15 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.graph.Graph">
+    tools:context=".ui.graph.Graph"
+    android:background="@color/white">
+    
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="금일의 미션기록"
+        android:layout_centerHorizontal="true"
+        android:textSize="35dp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/tvSquatTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="스쿼트"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true"/>
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"/>
 
     <TextView
         android:id="@+id/tvSquatCount"
@@ -21,14 +32,16 @@
         android:layout_below="@+id/tvSquatTitle"
         android:layout_centerHorizontal="true"
         android:text="0"
-        android:textSize="18sp"/>
+        android:textSize="30sp"
+        android:textColor="#FF00DD9B"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/tvPushupTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="푸쉬업"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:layout_below="@+id/tvSquatCount"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"/>
@@ -40,6 +53,8 @@
         android:layout_below="@+id/tvPushupTitle"
         android:layout_centerHorizontal="true"
         android:text="0"
-        android:textSize="18sp"/>
+        android:textSize="30sp"
+        android:textColor="#FF00DD9B"
+        android:textStyle="bold"/>
 
 </RelativeLayout>
