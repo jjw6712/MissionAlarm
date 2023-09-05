@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import com.example.ar1.Login;
-import com.example.ar1.MyInfoActivity;
 import com.example.ar1.R;
 import com.example.ar1.WebViewActivity;
-import com.example.ar1.databinding.MyInfoActivityBinding;
+import com.example.ar1.ui.mypage.userinfo.MyInfoActivity;
 
 import java.util.List;
 

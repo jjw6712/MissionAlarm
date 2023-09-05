@@ -47,13 +47,15 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ChangePHActivity"/>
+        <activity android:name=".ui.mypage.userinfo.ChangeSexActivity"/>
 
-        <activity android:name=".ChangeIDActivity"/>
+        <activity android:name=".ui.mypage.userinfo.ChangePHActivity"/>
 
-        <activity android:name=".ChangeNameActivity"/>
+        <activity android:name=".ui.mypage.userinfo.ChangeNameActivity"/>
 
-        <activity android:name=".MyInfoActivity" />
+        <activity android:name=".ui.mypage.userinfo.ChangeIDActivity"/>
+
+        <activity android:name=".ui.mypage.userinfo.MyInfoActivity" />
 
         <activity android:name=".WebViewActivity" />
 

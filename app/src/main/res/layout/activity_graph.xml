@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.graph.Graph">
+
+    <TextView
+        android:id="@+id/tvSquatTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="스쿼트"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/tvSquatCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvSquatTitle"
+        android:layout_centerHorizontal="true"
+        android:text="0"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tvPushupTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="푸쉬업"
+        android:textSize="24sp"
+        android:layout_below="@+id/tvSquatCount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/tvPushupCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvPushupTitle"
+        android:layout_centerHorizontal="true"
+        android:text="0"
+        android:textSize="18sp"/>
+
+</RelativeLayout>
