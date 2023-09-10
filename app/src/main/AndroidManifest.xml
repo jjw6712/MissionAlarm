@@ -47,6 +47,9 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.graph.SquatInfo"
+            tools:ignore="Instantiatable" />
+
         <activity android:name=".ui.mypage.userinfo.ChangeSexActivity"/>
 
         <activity android:name=".ui.mypage.userinfo.ChangePHActivity"/>
