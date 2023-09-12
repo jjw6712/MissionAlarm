@@ -50,6 +50,8 @@
         <activity android:name=".ui.graph.SquatInfo"
             tools:ignore="Instantiatable" />
 
+        <activity android:name=".ui.graph.PushUpInfo"/>
+
         <activity android:name=".ui.mypage.userinfo.ChangeSexActivity"/>
 
         <activity android:name=".ui.mypage.userinfo.ChangePHActivity"/>

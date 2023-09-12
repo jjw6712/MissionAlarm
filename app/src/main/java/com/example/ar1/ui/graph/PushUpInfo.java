@@ -1,13 +1,10 @@
 package com.example.ar1.ui.graph;
 
-import static androidx.fragment.app.FragmentManager.TAG;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,14 +15,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ar1.R;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,19 +35,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
-
-public class SquatInfo extends AppCompatActivity {
+public class PushUpInfo extends AppCompatActivity {
     private TextView tvTodayCount;
     private TextView tvWeeklyCount;
     private TextView tvMonthlyCount;
@@ -56,7 +47,7 @@ public class SquatInfo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_squat_info);
+        setContentView(R.layout.activity_pushup_info);
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -84,7 +75,7 @@ public class SquatInfo extends AppCompatActivity {
         String userId = prefs.getString("userId", null);
 
         Request request = new Request.Builder()
-                .url("https://sw--zqbli.run.goorm.site/getAllSquatMissionCount/" + userId)
+                .url("https://sw--zqbli.run.goorm.site/getAllPushUpMissionCount/" + userId)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -100,23 +91,23 @@ public class SquatInfo extends AppCompatActivity {
                     String json = response.body().string();
                     try {
                         JSONObject jsonObject = new JSONObject(json);
-                        int todaySquatCount = jsonObject.getInt("todaySquatCount");
-                        int weeklySquatCount = jsonObject.getInt("weeklySquatCount");
-                        int monthlySquatCount = jsonObject.getInt("monthlySquatCount");
+                        int todayPushUpCount = jsonObject.getInt("todayPushUpCount");  // 수정됨
+                        int weeklyPushUpCount = jsonObject.getInt("weeklyPushUpCount");  // 수정됨
+                        int monthlyPushUpCount = jsonObject.getInt("monthlyPushUpCount");  // 수정됨
 
                         JSONArray dailyCountsArray = jsonObject.getJSONArray("dailyCountsForMonth");
 
                         runOnUiThread(() -> {
-                            tvTodayCount.setText(String.valueOf(todaySquatCount));
-                            tvWeeklyCount.setText(String.valueOf(weeklySquatCount));
-                            tvMonthlyCount.setText(String.valueOf(monthlySquatCount));
+                            tvTodayCount.setText(String.valueOf(todayPushUpCount));  // 수정됨
+                            tvWeeklyCount.setText(String.valueOf(weeklyPushUpCount));  // 수정됨
+                            tvMonthlyCount.setText(String.valueOf(monthlyPushUpCount));  // 수정됨
 
                             Calendar cal = Calendar.getInstance();
                             int lastDayOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
                             List<BarEntry> entries = new ArrayList<>();
                             for (int day = 1; day <= lastDayOfMonth; day++) {
-                                int dailySquatCount = 0; // Initialize to 0
+                                int dailyPushUpCount = 0; // Initialize to 0
 
                                 for (int i = 0; i < dailyCountsArray.length(); i++) {
                                     JSONObject dailyCountObject = null;
@@ -135,17 +126,17 @@ public class SquatInfo extends AppCompatActivity {
 
                                     if (day == dayFromServer) {
                                         try {
-                                            dailySquatCount = dailyCountObject.getInt("dailySquatCount");
+                                            dailyPushUpCount = dailyCountObject.getInt("dailyPushUpCount");
                                         } catch (JSONException e) {
                                             throw new RuntimeException(e);
                                         }
                                         break;
                                     }
                                 }
-                                entries.add(new BarEntry(day, dailySquatCount));
+                                entries.add(new BarEntry(day, dailyPushUpCount));
                             }
 
-                            BarDataSet dataSet = new BarDataSet(entries, "Squat Count");
+                            BarDataSet dataSet = new BarDataSet(entries, "PushUp Count");
                             dataSet.setColor(Color.parseColor("#FF00DD9B"));
                             dataSet.setBarBorderWidth(0.9f);
                             dataSet.setValueTextColor(Color.parseColor("#FFFFFF"));  // Set to white to effectively hide it

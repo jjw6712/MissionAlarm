@@ -1,7 +1,11 @@
 package com.example.ar1.ui.graph;
 
+import static android.app.PendingIntent.getActivity;
+import static androidx.fragment.app.FragmentManager.TAG;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -17,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.appcompat.app.WindowDecorActionBar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -29,12 +34,22 @@ import com.example.ar1.R;
 import com.example.ar1.databinding.FragmentGraphBinding;
 import com.example.ar1.ui.mypage.MyPageListAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class Graph extends Fragment {
 
@@ -43,7 +58,10 @@ public class Graph extends Fragment {
     RecyclerView dateRecyclerView;
     DateAdapter dateAdapter;
     List<DateItem> dateItems;
+    TextView tvCount;
+    MissionListAdapter adapter;
 
+    @SuppressLint({"MissingInflatedId", "RestrictedApi"})
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,12 +70,23 @@ public class Graph extends Fragment {
         binding = FragmentGraphBinding.inflate(inflater, container, false);
         View root = inflater.inflate(R.layout.activity_graph_list, container, false);
 
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) ListView listView = root.findViewById(R.id.missionList);
+
+        List<String> itemList = new ArrayList<>();
+        // 아이템 리스트에 버튼에 표시할 내용 추가
+        itemList.add("스쿼트");
+        itemList.add("푸쉬업");
+
+        adapter = new MissionListAdapter(getActivity(), itemList);
+        listView.setAdapter(adapter);
+
+        tvCount = root.findViewById(R.id.tvCount);
 
         dateRecyclerView = root.findViewById(R.id.dateList);
         dateRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         initDates();
-        dateAdapter = new DateAdapter(dateItems);
+        dateAdapter = new DateAdapter(getActivity(), dateItems, adapter);
         dateRecyclerView.setAdapter(dateAdapter);
 
         // RecyclerView에 적용
@@ -74,21 +103,24 @@ public class Graph extends Fragment {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(android.R.color.black));
         }
-        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) ListView listView = root.findViewById(R.id.missionList);
-
-        List<String> itemList = new ArrayList<>();
-        // 아이템 리스트에 버튼에 표시할 내용 추가
-        itemList.add("스쿼트");
-        itemList.add("푸쉬업");
-
-        MissionListAdapter adapter = new MissionListAdapter(getActivity(), itemList);
-        listView.setAdapter(adapter);
 
         SharedPreferences preferences = requireActivity().getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
         userId = preferences.getString("userId", "");
         userName = preferences.getString("userName", "");
 
         selectToday();
+        DateItem selectedItem = dateAdapter.getSelectedItem();
+        Date selectedDate = null;
+        if (selectedItem != null) {
+            selectedDate = selectedItem.getDate();
+            // selectedDate를 사용하여 원하는 작업을 수행합니다.
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedDate = sdf.format(selectedDate);
+
+        fetchWorkoutData(userId, formattedDate);
+        Log.d(TAG, "선택 날짜: "+formattedDate);
 
         return root;
     }
@@ -157,7 +189,7 @@ public class Graph extends Fragment {
         // 이번 주 일요일을 구함
         Calendar thisSunday = (Calendar) today.clone();
         int dayOfWeek = thisSunday.get(Calendar.DAY_OF_WEEK);
-        int offsetToSunday = Calendar.SUNDAY - dayOfWeek;
+        int offsetToSunday = Calendar.TUESDAY - dayOfWeek;
         thisSunday.add(Calendar.DATE, offsetToSunday);
 
         // 이번 주 일요일부터 토요일까지 날짜를 추가
@@ -210,7 +242,60 @@ public class Graph extends Fragment {
             }
         }
     }
+    private final OkHttpClient httpClient = new OkHttpClient();
+
+    private void fetchWorkoutData(String userId, String selectedDate) {
+
+        String url = "https://sw--zqbli.run.goorm.site/getMissionCountByDate/" + userId + "/" + selectedDate;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Handle the error
+            }
+
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        final int squatCount = jsonObject.getInt("squatCount");
+                        final int pushUpCount = jsonObject.getInt("pushUpCount");
+                        Log.d(TAG, "스쿼트: "+squatCount);
+                        Log.d(TAG, "푸쉬업: "+pushUpCount);
+
+                        if (getActivity() != null) {  // getActivity() null 체크 추가
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (adapter != null) {  // null 체크 추가
+                                        adapter.updateSquatCount(squatCount);
+                                        adapter.updatePushUpCount(pushUpCount);
+                                    }
+                                }
+                            });
+                        }
+
+                    } catch (JSONException e) {
+                        // Handle JSON parsing error
+                    }
+                } else {
+                    // Handle error cases
+                }
+            }
+        });
+    }
+
 }
+
+
 
 class DateItem {
     private java.util.Date date;
@@ -237,13 +322,17 @@ class DateItem {
     }
 }
 
-class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
 
+class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
+    MissionListAdapter adapter;
     private List<DateItem> dateItems;
     private int selectedPosition = -1;
+    private Context mContext; // Context 객체 추가
 
-    public DateAdapter(List<DateItem> dateItems) {
+    public DateAdapter(Context context, List<DateItem> dateItems,  MissionListAdapter missionListAdapter) {
+        this.mContext = context;
         this.dateItems = dateItems;
+        this.adapter = missionListAdapter;
     }
 
     @NonNull
@@ -253,13 +342,27 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        SharedPreferences preferences = mContext.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        String userId = preferences.getString("userId", "");
         DateItem dateItem = dateItems.get(position);
         SimpleDateFormat sdf = new SimpleDateFormat("dd", Locale.getDefault());
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.getDefault());
+
+        String dayOfWeekStr = dayFormat.format(dateItem.getDate()).toUpperCase();
         holder.dateText.setText(sdf.format(dateItem.getDate()));
-        holder.dayOfWeek.setText(dayFormat.format(dateItem.getDate()).toUpperCase());  // 수정된 부분
+        holder.dayOfWeek.setText(dayOfWeekStr);
+
+        // 일요일이면 빨간색으로 변경
+        if ("일".equals(dayOfWeekStr)) {
+            holder.dateText.setTextColor(Color.RED);
+            holder.dayOfWeek.setTextColor(Color.RED);
+        } else {
+            holder.dateText.setTextColor(Color.WHITE);
+            holder.dayOfWeek.setTextColor(Color.WHITE);
+        }
 
         if (!dateItem.isSelectable()) {
             holder.itemView.setEnabled(false);
@@ -272,16 +375,29 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(v -> {
             if (dateItem.isSelectable()) {
                 selectedPosition = position;
+                DateItem selectedItem = dateItems.get(selectedPosition); // 현재 리스트에서 선택된 아이템을 가져옵니다.
+                Date selectedDate = null;
+                if (selectedItem != null) {
+                    selectedDate = selectedItem.getDate();
+                    // selectedDate를 사용하여 원하는 작업을 수행합니다.
+                }
+
+                SimpleDateFormat sdd = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String formattedDate = sdd.format(selectedDate);
+
+                fetchWorkoutData(userId, formattedDate); // 비동기 작업
+                Log.d(TAG, "선택 날짜 어뎁터: " + formattedDate);
                 notifyDataSetChanged();
             }
         });
 
         if (position == selectedPosition) {
-            holder.itemView.setBackgroundColor(Color.BLUE);
+            holder.itemView.setSelected(true);
         } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            holder.itemView.setSelected(false);
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -292,16 +408,70 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
         this.selectedPosition = position;
         notifyDataSetChanged();
     }
+    private final OkHttpClient httpClient = new OkHttpClient();
+    private void fetchWorkoutData(String userId, String selectedDate) {
+        String url = "https://sw--zqbli.run.goorm.site/getMissionCountByDate/" + userId + "/" + selectedDate;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Handle the error
+            }
+
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        final int squatCount = jsonObject.getInt("squatCount");
+                        final int pushUpCount = jsonObject.getInt("pushUpCount");
+                        Log.d(TAG, "어뎁터 스쿼트: "+squatCount);
+                        Log.d(TAG, "어뎁터 푸쉬업: "+pushUpCount);
+
+                        ((Activity) mContext).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (adapter != null) {
+                                    adapter.updateSquatCount(squatCount);
+                                    adapter.updatePushUpCount(pushUpCount);
+                                }
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        // Handle JSON parsing error
+                    }
+                } else {
+                    // Handle error cases
+                }
+            }
+        });
+    }
+
+    @SuppressLint("RestrictedApi")
+    public DateItem getSelectedItem() {
+        if (selectedPosition != -1) {
+            Log.d(TAG, "getSelectedItem: "+selectedPosition);
+            return dateItems.get(selectedPosition);
+        }
+        return null;
+    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView dayOfWeek;  // 타입 변경: WindowDecorActionBar.TabImpl -> TextView
+        public TextView dayOfWeek;
         TextView dateText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             dateText = itemView.findViewById(R.id.dateText);
-            dayOfWeek = itemView.findViewById(R.id.dayOfWeek);  // 적절한 ID로 변경해주세요
+            dayOfWeek = itemView.findViewById(R.id.dayOfWeek);
         }
     }
-
 }

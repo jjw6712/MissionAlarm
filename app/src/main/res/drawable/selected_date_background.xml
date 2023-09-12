@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 선택된 경우의 배경 -->
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="#FF00DD9B" /> <!-- 원하는 색상 -->
+            <corners android:radius="8dp" /> <!-- 원하는 모서리 둥글기 -->
+        </shape>
+    </item>
+
+    <!-- 기본 배경 -->
+    <item>
+        <shape>
+            <solid android:color="@color/black" /> <!-- 원하는 색상 -->
+            <corners android:radius="4dp" /> <!-- 원하는 모서리 둥글기 -->
+        </shape>
+    </item>
+</selector>
