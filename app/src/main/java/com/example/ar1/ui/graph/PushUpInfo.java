@@ -91,16 +91,16 @@ public class PushUpInfo extends AppCompatActivity {
                     String json = response.body().string();
                     try {
                         JSONObject jsonObject = new JSONObject(json);
-                        int todayPushUpCount = jsonObject.getInt("todayPushUpCount");  // 수정됨
-                        int weeklyPushUpCount = jsonObject.getInt("weeklyPushUpCount");  // 수정됨
-                        int monthlyPushUpCount = jsonObject.getInt("monthlyPushUpCount");  // 수정됨
+                        int todayPushUpCount = jsonObject.optInt("todayPushUpCount", 0);  // 0이 기본값입니다.
+                        int weeklyPushUpCount = jsonObject.optInt("weeklyPushUpCount", 0);
+                        int monthlyPushUpCount = jsonObject.optInt("monthlyPushUpCount", 0);
 
                         JSONArray dailyCountsArray = jsonObject.getJSONArray("dailyCountsForMonth");
 
                         runOnUiThread(() -> {
-                            tvTodayCount.setText(String.valueOf(todayPushUpCount));  // 수정됨
-                            tvWeeklyCount.setText(String.valueOf(weeklyPushUpCount));  // 수정됨
-                            tvMonthlyCount.setText(String.valueOf(monthlyPushUpCount));  // 수정됨
+                            tvTodayCount.setText(String.valueOf(todayPushUpCount == 0 ? 0 : todayPushUpCount));
+                            tvWeeklyCount.setText(String.valueOf(weeklyPushUpCount == 0 ? 0 : weeklyPushUpCount));
+                            tvMonthlyCount.setText(String.valueOf(monthlyPushUpCount == 0 ? 0 : monthlyPushUpCount));
 
                             Calendar cal = Calendar.getInstance();
                             int lastDayOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);

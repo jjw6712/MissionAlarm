@@ -200,7 +200,11 @@ public class Graph extends Fragment {
             } else {
                 item.setSelectable(false); // 선택 불가능
             }
-            dateItems.add(item);
+
+            // 중복되는 항목이 없을 때만 추가
+            if (!isDateAlreadyAdded(thisSunday.getTime())) {
+                dateItems.add(item);
+            }
             thisSunday.add(Calendar.DATE, 1);
         }
 
@@ -218,7 +222,20 @@ public class Graph extends Fragment {
             }
         }
     }
-
+    // 기존의 dateItems 리스트에 해당 날짜가 있는지 검사
+    private boolean isDateAlreadyAdded(Date date) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date);
+        for (DateItem item : dateItems) {
+            cal2.setTime(item.getDate());
+            if (cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                    cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void selectToday() {
         // Find today's date and set it as selected
         Calendar today = Calendar.getInstance();

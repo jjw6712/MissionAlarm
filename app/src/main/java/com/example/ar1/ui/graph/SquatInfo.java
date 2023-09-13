@@ -100,16 +100,16 @@ public class SquatInfo extends AppCompatActivity {
                     String json = response.body().string();
                     try {
                         JSONObject jsonObject = new JSONObject(json);
-                        int todaySquatCount = jsonObject.getInt("todaySquatCount");
-                        int weeklySquatCount = jsonObject.getInt("weeklySquatCount");
-                        int monthlySquatCount = jsonObject.getInt("monthlySquatCount");
+                        int todaySquatCount = jsonObject.optInt("todaySquatCount", 0);  // 0이 기본값입니다.
+                        int weeklySquatCount = jsonObject.optInt("weeklySquatCount", 0);
+                        int monthlySquatCount = jsonObject.optInt("monthlySquatCount", 0);
 
                         JSONArray dailyCountsArray = jsonObject.getJSONArray("dailyCountsForMonth");
 
                         runOnUiThread(() -> {
-                            tvTodayCount.setText(String.valueOf(todaySquatCount));
-                            tvWeeklyCount.setText(String.valueOf(weeklySquatCount));
-                            tvMonthlyCount.setText(String.valueOf(monthlySquatCount));
+                            tvTodayCount.setText(String.valueOf(todaySquatCount == 0 ? 0 : todaySquatCount));
+                            tvWeeklyCount.setText(String.valueOf(weeklySquatCount == 0 ? 0 : weeklySquatCount));
+                            tvMonthlyCount.setText(String.valueOf(monthlySquatCount == 0 ? 0 : monthlySquatCount));
 
                             Calendar cal = Calendar.getInstance();
                             int lastDayOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -119,13 +119,13 @@ public class SquatInfo extends AppCompatActivity {
                                 int dailySquatCount = 0; // Initialize to 0
 
                                 for (int i = 0; i < dailyCountsArray.length(); i++) {
-                                    JSONObject dailyCountObject = null;
+                                    JSONObject dailyCountObject = null; // JSON exception은 catch에서 처리하므로 제거
                                     try {
                                         dailyCountObject = dailyCountsArray.getJSONObject(i);
                                     } catch (JSONException e) {
                                         throw new RuntimeException(e);
                                     }
-                                    String dateStr = null;
+                                    String dateStr = null; // JSON exception은 catch에서 처리하므로 제거
                                     try {
                                         dateStr = dailyCountObject.getString("date");
                                     } catch (JSONException e) {
@@ -135,14 +135,14 @@ public class SquatInfo extends AppCompatActivity {
 
                                     if (day == dayFromServer) {
                                         try {
-                                            dailySquatCount = dailyCountObject.getInt("dailySquatCount");
+                                            dailySquatCount = dailyCountObject.getInt("dailySquatCount"); // JSON exception은 catch에서 처리하므로 제거
                                         } catch (JSONException e) {
                                             throw new RuntimeException(e);
                                         }
                                         break;
                                     }
                                 }
-                                entries.add(new BarEntry(day, dailySquatCount));
+                                entries.add(new BarEntry(day, dailySquatCount));  // 0도 추가됩니다.
                             }
 
                             BarDataSet dataSet = new BarDataSet(entries, "Squat Count");
