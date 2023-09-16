@@ -31,8 +31,8 @@
 
     <ImageView
         android:id="@+id/userImage"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_margin="10dp"
         android:background="@drawable/profile_bubble"
         android:cropToPadding="true"
@@ -51,7 +51,7 @@
         android:paddingEnd="16dp"
         android:text="User Name"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="16dp"
         android:textStyle="bold" />
 
     <TextView
