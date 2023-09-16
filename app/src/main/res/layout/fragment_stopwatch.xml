@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg"
+    android:background="@color/black"
     android:gravity="center">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/button2"
+        android:background="@color/black"
         android:orientation="vertical"
         android:padding="20dp">
         <LinearLayout
@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text=" Stop watch "
+                android:text=" Stop Watch "
                 android:textSize="40dp"
                 android:textColor="@color/your_checked_color"/>
 

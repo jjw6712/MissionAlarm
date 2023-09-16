@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="24sp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:textColor="@color/white"/>
 
     <!-- 알람 취소 버튼 -->
     <Switch
@@ -28,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:thumbTint="@color/your_checked_color"
-        android:trackTint="@color/statusBarColor"
+        android:trackTint="@color/white"
         android:textOff="알람 꺼짐"
         android:textOn="알람 켜짐"
         android:layout_gravity="center"/>

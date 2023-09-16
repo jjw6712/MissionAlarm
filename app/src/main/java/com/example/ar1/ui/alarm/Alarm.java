@@ -94,18 +94,13 @@ public class Alarm extends Fragment {
         binding = FragmentAlarmBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        int color = Color.parseColor("#575757");
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-        hsv[2] *= 1.25f; // 20% 밝게
-        color = Color.HSVToColor(hsv);
-
         // 프래그먼트에서 상태바 색상 변경
         if (getActivity() != null) {
             Window window = getActivity().getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(color);
+            window.setStatusBarColor(getResources().getColor(android.R.color.black));
         }
+
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
