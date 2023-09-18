@@ -35,11 +35,6 @@ public class AlarmSettingActivity extends AppCompatActivity {
     private AlarmDBHelper databaseHelper;
     private Spinner stretchingOptionSpinner;
 
-    private boolean isEditMode;
-    private int editId;
-    private int editHour;
-    private int editMinute;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

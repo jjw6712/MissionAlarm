@@ -37,7 +37,7 @@
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         android:textSize="25dp"
-        android:backgroundTint="#FF4081"
+        android:backgroundTint="#FF00DD9B"
         android:background="@drawable/button"
         android:layout_centerHorizontal="true" />
 
