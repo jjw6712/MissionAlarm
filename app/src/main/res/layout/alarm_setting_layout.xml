@@ -45,6 +45,7 @@
             android:layout_height="wrap_content"
             android:prompt="@string/select_stretching_option"
             android:theme="@style/MyTimePickerDivider"
+            android:backgroundTint="#FF00DD9B"
             />
 
         <TextView
