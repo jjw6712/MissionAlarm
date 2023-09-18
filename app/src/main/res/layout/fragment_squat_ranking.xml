@@ -6,17 +6,22 @@
     tools:context=".ui.rank.Ranking"
     android:background="@color/black">
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="DuplicateIds" />
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:text="통합 랭킹"
+        android:text="스쿼트 랭킹"
         android:textSize="30dp"
         android:textStyle="bold"
         android:textColor="@color/white"
         android:layout_gravity="center"/>
-
+    
 
 
     <ListView
@@ -28,11 +33,5 @@
         android:layout_marginEnd="20dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="8dp"/>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="DuplicateIds" />
 
 </FrameLayout>

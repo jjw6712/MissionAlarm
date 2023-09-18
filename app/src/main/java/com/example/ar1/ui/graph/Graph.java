@@ -189,7 +189,7 @@ public class Graph extends Fragment {
         // 이번 주 일요일을 구함
         Calendar thisSunday = (Calendar) today.clone();
         int dayOfWeek = thisSunday.get(Calendar.DAY_OF_WEEK);
-        int offsetToSunday = Calendar.TUESDAY - dayOfWeek;
+        int offsetToSunday = Calendar.SUNDAY - dayOfWeek;
         thisSunday.add(Calendar.DATE, offsetToSunday);
 
         // 이번 주 일요일부터 토요일까지 날짜를 추가
