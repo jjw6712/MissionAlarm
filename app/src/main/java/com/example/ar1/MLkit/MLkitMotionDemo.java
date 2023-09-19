@@ -48,9 +48,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.ar1.Alarm;
+import com.example.ar1.R;
 import com.example.ar1.ui.alarm.AlarmActivity;
 import com.example.ar1.ui.alarm.AlarmDBHelper;
-import com.example.ar1.R;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.pose.Pose;
@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -80,7 +81,7 @@ import okhttp3.Response;
 
 @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
 
-public class MLkitMotion extends AppCompatActivity{
+public class MLkitMotionDemo extends AppCompatActivity{
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private static final int COUNTDOWN_DURATION = 10000; // 카운트 다운 시간 (밀리초)
     private static final int Reapit_Alarm_Count = 60000; //알람 반복 되기까지의 제한시간
@@ -112,7 +113,6 @@ public class MLkitMotion extends AppCompatActivity{
     private boolean isPushingUp = false;
 
     private boolean isPushingUping = false;
-    private SharedPreferences sharedPreferences;
 
     private int alarmId;
     private String userId;
@@ -127,28 +127,6 @@ public class MLkitMotion extends AppCompatActivity{
     private Alarm alarm;
     private Handler stCountCheckHandler = new Handler();
     // 스트레칭 카운트가 증가하는 것을 감시하는 Runnable을 생성 스트레칭 카운트가 1분동안 증가하지 않으면 스트레칭 횟수를 추가해서 다 시 알람을 울림
-    Runnable stCountCheckRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // 스트레칭 카운트가 마지막으로 확인한 카운트와 같으면 알람 액티비티를 호출
-            if (stCount == lastStCount) {
-                isReapitAlarm = true;//알람 액티비를 호출하는 상태임을 나타내는 플래그
-                Intent intent = new Intent(MLkitMotion.this, AlarmActivity.class);
-                sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
-                intent.putExtra("alarm_id", alarmId); // 여기서 alarmId는 인텐트로 받아온 알람 ID
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                int selectedCount = Integer.parseInt(stretchingCount); // stretchingCount를 정수형으로 변환
-                int updatedCount = selectedCount + 5; // 숫자형 값을 더함
-
-                String updatedCountString = String.valueOf(updatedCount); // 숫자형 값을 문자열로 변환
-
-                editor.putString("selected_stretching_count_" + alarmId, updatedCountString); // 문자열로 변환한 값을 저장
-                editor.apply(); // 변경사항을 적용
-                finish();
-                startActivity(intent);
-            }
-        }
-    };
 
 
     @Override
@@ -158,7 +136,6 @@ public class MLkitMotion extends AppCompatActivity{
 
         viewFinder = findViewById(R.id.viewFinder);
         tvSquatCount = findViewById(R.id.tvSquatCount);
-        //tvGoalCount = findViewById(R.id.tvGoalCount);
         graphicOverlay = findViewById(R.id.graphicOverlay);
         tvFps = findViewById(R.id.tvFps);
         layoutbottom = findViewById(R.id.layoutBottom);
@@ -197,68 +174,17 @@ public class MLkitMotion extends AppCompatActivity{
             orientationEventListener.enable();
         }
 
-        // 액티비티가 시작될 때 실행되는 mp3 파일을 반복적으로 재생
-        mediaPlayer = MediaPlayer.create(this, R.raw.st_start);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
         // 이 코드가 화면이 자동으로 꺼지는 것을 막음
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
-        alarmId = getIntent().getIntExtra("alarm_id", -1); // 알람 ID 받아오기
-        stretchingCount = sharedPreferences.getString("selected_stretching_count_" + alarmId, "default"); // 알람 ID 사용하여 스트레칭 횟수 불러오기
-        Log.d("StretchingMode", "Selected count: " + alarmId + stretchingCount); // 확인용 로그 문
-        //tvGoalCount.setText("목표횟수: " + stretchingCount);
+        stretchingCount = sharedPreferences.getString("selected_defalut_stretching_count_", "default"); // 알람 ID 사용하여 스트레칭 횟수 불러오기
+        Log.d("StretchingMode", "Selected count: " +stretchingCount); // 확인용 로그 문
 
         initialCount = Integer.parseInt(stretchingCount);// stCount의 갯수가 줄어들때 음성 안내는 하나부터 시작하도록 하기위한 기존 목표횟수를 저장
         stCount = Integer.parseInt(stretchingCount);
         tvSquatCount.setText(String.valueOf(stCount)); // 초기 진행횟수 텍스트뷰 0으로 초기화
-
-        //mlkitmotion에서 스트레칭 시작 버튼을 1분동안 안누르면 알람액티비티 호출하기위한 핸들러
         handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                isReapitAlarm = true;//알람 액티비를 호출하는 상태임을 나타내는 플래그
-                Intent intent = new Intent(MLkitMotion.this, AlarmActivity.class); // mlkitmotion에서 알람시작 버튼을 1분동안 안누르면 알람액티비티 호출
-                intent.putExtra("alarm_id", alarmId);  // 알람 액티비티 여러번 호출 시 alarmId 손실 방지를 위해 알람액티비티에 alarmId전달
-                //사용자가 일어나지 않아서 다시 알람이 울릴경우 스트레칭 횟수를 5씩 더함 이 값은 누적되어 두번 미루면 10이 올라간 값이됨
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                int selectedCount = Integer.parseInt(stretchingCount); // stretchingCount를 정수형으로 변환
-                int updatedCount = selectedCount + 5; // 숫자형 값을 더함
-
-                String updatedCountString = String.valueOf(updatedCount); // 숫자형 값을 문자열로 변환
-
-                editor.putString("selected_stretching_count_" + alarmId, updatedCountString); // 문자열로 변환한 값을 저장
-                editor.apply(); // 변경사항을 적용
-                finish();
-                startActivity(intent);
-            }
-        };
-
-        handler.postDelayed(runnable, Reapit_Alarm_Count); // mlkitmotion에서 스트레칭 시작 버튼을 1분동안 안누르면 알람액티비티 호출
-
-        CountDownTimer autoStartTimer = new CountDownTimer(Reapit_Alarm_Count, COUNTDOWN_INTERVAL) {
-            public void onTick(long millisUntilFinished) {
-                long secondsUntilFinished = millisUntilFinished / COUNTDOWN_INTERVAL;
-                String message = secondsUntilFinished + "\n초 후 알람이 다시 울립니다.";
-
-                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(message);
-                int startSpan = String.valueOf(secondsUntilFinished).length() + 1; // Plus one to account for the space
-                int endSpan = message.length();
-                spannableStringBuilder.setSpan(new RelativeSizeSpan(0.1f), startSpan, endSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                countdownTextView.setText(spannableStringBuilder);
-                countdownTextView.setVisibility(View.VISIBLE);
-            }
-
-            public void onFinish() {
-                countdownTextView.setVisibility(View.GONE);
-            }
-        };
-
-        autoStartTimer.start();
-
         // Initialize countdown timer
         CountDownTimer countDownTimer = new CountDownTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL) {
             public void onTick(long millisUntilFinished) {
@@ -286,26 +212,25 @@ public class MLkitMotion extends AppCompatActivity{
             }
         };
 
-        stCountCheckHandler.postDelayed(stCountCheckRunnable, 70000);//mlkitmotion클래스에서 스트레칭을 1분동안 카운팅이 안올라갈 때 알람액티비티 재호출
-
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 스트레칭 시작 버튼 숨김
                 startButton.setVisibility(View.GONE);
-                // 카운트 다운 레이아웃을 보이도록함
+                // 카운트 다운 레이아웃을 보이도록 함
                 countdownTextView.setVisibility(View.VISIBLE);
                 // 카운트 다운 실행
                 countDownTimer.start();
                 // 지연된 활동 종료 취소
                 handler.removeCallbacks(runnable);
-                // 60초 버튼 타이머 종료
-                autoStartTimer.cancel();
-                // 스트레칭 시작 버튼을 누르면 한 번 실행되는 mp3 파일을 재생합니다.
-                mediaPlayer.stop();  // st_start 재생 중지
-                mediaPlayer.release();  // MediaPlayer 해제
 
-                motionStartMediaPlayer = MediaPlayer.create(MLkitMotion.this, R.raw.motion_start);
+                // 스트레칭 시작 버튼을 누르면 mp3 파일을 재생합니다.
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();  // st_start 재생 중지
+                    mediaPlayer.release();  // MediaPlayer 해제
+                }
+
+                motionStartMediaPlayer = MediaPlayer.create(MLkitMotionDemo.this, R.raw.motion_start);
                 motionStartMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
@@ -316,7 +241,6 @@ public class MLkitMotion extends AppCompatActivity{
                 });
                 motionStartMediaPlayer.start();
             }
-
         });
 
         PoseDetectorOptions options = new PoseDetectorOptions.Builder()
@@ -345,10 +269,6 @@ public class MLkitMotion extends AppCompatActivity{
     public void incrementStCount() {
         stCount--;
         lastStCount = stCount;
-
-        // 스트레칭 카운트가 증가하면 타이머를 재설정
-        stCountCheckHandler.removeCallbacks(stCountCheckRunnable);
-        stCountCheckHandler.postDelayed(stCountCheckRunnable, 60000);
 
         // 현재 진행된 스트레칭 횟수 계산
         int currentCount = initialCount - stCount;
@@ -392,7 +312,7 @@ public class MLkitMotion extends AppCompatActivity{
                     // 스트레칭 카운트가 목표치에 도달했는지 확인
                     if (stCount <= 0) {
                         // 'motion_end' 재생
-                            motionEndMediaPlayer = MediaPlayer.create(MLkitMotion.this, R.raw.motion_end); // ActivityName은 현재 Activity의 이름으로 변경해야 합니다.
+                            motionEndMediaPlayer = MediaPlayer.create(MLkitMotionDemo.this, R.raw.motion_end); // ActivityName은 현재 Activity의 이름으로 변경해야 합니다.
                         motionEndMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
@@ -455,8 +375,8 @@ public class MLkitMotion extends AppCompatActivity{
     private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
         SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
         alarmId = getIntent().getIntExtra("alarm_id", -1); // 알람 ID 받아오기
-        stretchingMode = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default"); // 알람 ID 사용하여 스트레칭 모드 불러오기
-        Log.d("StretchingMode", "Selected mode: " + alarmId + stretchingMode); // 확인용 로그 문
+        stretchingMode = sharedPreferences.getString("selected_stretching_default_mode_", "default"); // 알람 ID 사용하여 스트레칭 모드 불러오기
+        Log.d("StretchingMode", "Selected mode: " + stretchingMode); // 확인용 로그 문
 
         if (stretchingMode != null) {
             if (stretchingMode.equals("스쿼트")) {
@@ -740,27 +660,11 @@ public class MLkitMotion extends AppCompatActivity{
     }
 
     @Override
-    public void onBackPressed() { //뒤로가기 버튼 기능 오버라이드 하여 모션인식 중에 뒤로가기키 비활성화
-        Toast.makeText(this, "뒤로 가기 버튼이 비활성화되었습니다.", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(runnable);
-        stCountCheckHandler.removeCallbacks(stCountCheckRunnable);
-
-        if (isReapitAlarm) { //타이머 시간이 경과하여 패널티 알람이 울릴때는 메서드 탈출
-            return;
-        }
-        if (stop_motion){ //미션을 정상적으로 마쳣다면 서버로 데이터를 보내고 메서드 탈출
             SendToServer();
-            return;
-        }
 
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
     }
 
     @Override
@@ -794,17 +698,20 @@ public class MLkitMotion extends AppCompatActivity{
         // AlarmDBHelper 인스턴스 생성
         AlarmDBHelper dbHelper = new AlarmDBHelper(this); //sqlite 로컬db 객체 초기화
 
-        // alarmId를 사용하여 시간 가져오기
-        int[] time = dbHelper.loadTime(alarmId);
-        String alarmTime = currentDate + " " + time[0] + ":" + time[1]; // 날짜와 시간, 분을 문자열로 변환
+        // alarmId를 항상 null로 설정
+        String alarmId = "기본모드";
 
-        HashMap<String, String> data = new HashMap<>(); // 해쉬맵으로 데이터를 구성하기위한 해쉬맵 객체 초기화
-        data.put("userId", userId); //로그인한 우저 id 삽입
-        data.put("alarmId", String.valueOf(alarmId)); //해당 알람 id 삽입
-        data.put("alarmTime", alarmTime); //해당 알람 시간 삽입
-        data.put("missionName", stretchingMode); // 해당 알람 미션종류 삽입
-        data.put("missionCount", stretchingCount); // 해당 알람 미션완료 갯수 삽입
-        Log.d(TAG, ("userId: " + userId + "\nalarmId: " + alarmId + "\nalarmTime: " + alarmTime + "\nmissionMode: " + stretchingMode + "\nmissionCount: " + stretchingCount));
+// 현재 날짜와 시간을 구합니다.
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        String currentDateAndTime = sdf.format(new Date());
+
+        HashMap<String, String> data = new HashMap<>(); // 해쉬맵으로 데이터를 구성하기 위한 해쉬맵 객체 초기화
+        data.put("userId", userId); // 로그인한 사용자 ID 삽입
+        data.put("alarmId", alarmId); // 항상 null로 설정
+        data.put("alarmTime", currentDateAndTime); // 현재 날짜와 시간 삽입
+        data.put("missionName", stretchingMode); // 해당 알람 미션 종류 삽입
+        data.put("missionCount", stretchingCount); // 해당 알람 미션 완료 갯수 삽입
+        Log.d(TAG, ("userId: " + userId + "\nalarmId: " + alarmId + "\nalarmTime: " + currentDateAndTime + "\nmissionMode: " + stretchingMode + "\nmissionCount: " + stretchingCount));
 
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject jsonObject = new JSONObject(data);

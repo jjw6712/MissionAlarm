@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.ar1.ui.stopwatch.StopWatch"
+        android:name="com.example.ar1.ui.mission.Mission"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_stopwatch" />
+        tools:layout="@layout/fragment_mission" />
 
     <fragment
         android:id="@+id/navigation_notifications"

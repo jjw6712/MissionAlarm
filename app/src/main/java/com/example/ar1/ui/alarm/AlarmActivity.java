@@ -1,5 +1,7 @@
 package com.example.ar1.ui.alarm;
 
+import static androidx.fragment.app.FragmentManager.TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -38,7 +41,9 @@ public class AlarmActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
     private boolean start_motion = false;
-    SharedPreferences sharedPreferences;
+    private int alarmId;
+    String stretchingOptionSaved;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +87,22 @@ public class AlarmActivity extends AppCompatActivity {
         vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0));
 
         // 알람 ID 받아오기
-        final String alarmId = String.valueOf(getIntent().getIntExtra("alarm_id", -1));
-        String stretchingOptionSaved = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default");
-
-
+        alarmId = getIntent().getIntExtra("alarm_id", -1); // 알람 ID 받아오기
+        sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
+        if (alarmId != -1) {
+            stretchingOptionSaved = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default"); // 알람 ID 사용하여 스트레칭 모드 불러오기
+            Log.d(TAG, "알람액티비티 알람아이디: " + alarmId + " 스트레칭 옵션 " + stretchingOptionSaved);
+        } else {
+            Log.e(TAG, "알람 아이디가 유효하지 않습니다.");
+        }
+        if ("선택안함".equals(stretchingOptionSaved)) { //아무런 미션을 선태하지 않으면 일반 알람처럼 꺼짐
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btnStopAlarm.setText("알람끄기");
+                }
+            });
+        }
 
         // 알람을 멈추는 버튼을 클릭하면 액티비티와 미디어 플레이어를 종료합니다.
         btnStopAlarm.setOnClickListener(new View.OnClickListener() {
@@ -103,10 +120,8 @@ public class AlarmActivity extends AppCompatActivity {
                 //setMediaVolume(AudioManager.USE_DEFAULT_STREAM_TYPE);
 
                 if ("선택안함".equals(stretchingOptionSaved)) { //아무런 미션을 선태하지 않으면 일반 알람처럼 꺼짐
-                    btnStopAlarm.setText("알람끄기");
                     finish();
                 } else {
-
                     Intent mlkitMotionIntent = new Intent(AlarmActivity.this, MLkitMotion.class);
 
                     // 알람 ID를 인텐트에 추가

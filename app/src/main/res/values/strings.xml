@@ -6,7 +6,7 @@
     <string name="enter_initial_count">초기 갯수를 입력하세요</string>
     <string name="title_activity_bottom">BottomActivity</string>
     <string name="title_home">알람</string>
-    <string name="title_dashboard">스탑워치</string>
+    <string name="title_dashboard">미션</string>
     <string name="title_notifications">기록</string>
     <string name="title_rank">랭킹</string>
     <string name="title_my_page">내정보</string>

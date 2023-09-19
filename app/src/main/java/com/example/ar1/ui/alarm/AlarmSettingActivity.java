@@ -337,6 +337,7 @@ public class AlarmSettingActivity extends AppCompatActivity {
             editor.putString("selected_stretching_count_" + alarmId, selectedCount);
             editor.apply();
             String stretchingOptionSaved = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default");
+
             Log.d("TAG", "Saved stretching option: " + stretchingOptionSaved);
 
             // 토스트 메시지로 알람 설정 완료 메시지 표시

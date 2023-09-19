@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#FF00DD9B"
-            android:text="스트레칭 시작"
+            android:text="미션 시작"
             android:background="@drawable/button2"
             android:textColor="@android:color/white"
             android:textSize="24sp"
