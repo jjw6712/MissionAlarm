@@ -1,14 +1,9 @@
-package com.example.ar1;
+package com.example.ar1.ui.alarm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.Toast;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override

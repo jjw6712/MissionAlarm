@@ -1,4 +1,4 @@
-package com.example.ar1;
+package com.example.ar1.ui.alarm;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -17,23 +17,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.List;
+import com.example.ar1.R;
 
 public class AlarmAdapter extends ArrayAdapter<String> {
     private Context mContext;

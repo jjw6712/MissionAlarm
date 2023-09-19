@@ -21,7 +21,7 @@
 
     <style name="MyTimePickerDivider" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorControlNormal">#FF00DD9B</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorPrimary">#ffffff</item>
     </style>
     <!-- TimePicker 색상 변경 -->
 

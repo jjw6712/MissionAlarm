@@ -48,8 +48,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.ar1.Alarm;
-import com.example.ar1.AlarmActivity;
-import com.example.ar1.AlarmDBHelper;
+import com.example.ar1.ui.alarm.AlarmActivity;
+import com.example.ar1.ui.alarm.AlarmDBHelper;
 import com.example.ar1.R;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;

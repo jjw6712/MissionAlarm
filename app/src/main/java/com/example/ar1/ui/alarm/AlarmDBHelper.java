@@ -1,4 +1,4 @@
-package com.example.ar1;
+package com.example.ar1.ui.alarm;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.example.ar1.Alarm;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,8 +69,8 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public List<Alarm> getAllAlarms() {
-        List<Alarm> alarms = new ArrayList<>();
+    public List<com.example.ar1.Alarm> getAllAlarms() {
+        List<com.example.ar1.Alarm> alarms = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
 
@@ -88,14 +90,14 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                 null
         );
 
-        Alarm alarm;
+        com.example.ar1.Alarm alarm;
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
             int hour = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_HOUR));
             int minute = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MINUTE));
 
 
-            alarm = new Alarm(id, hour, minute);
+            alarm = new com.example.ar1.Alarm(id, hour, minute);
             alarms.add(alarm);
         }
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.mypage.MyPage"
-    android:background="@color/white">
+    android:background="@color/black">
     <TextView
         android:id="@+id/profileName"
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:textAlignment="center"
         android:textSize="20sp"
         android:text="프로필"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:visibility="visible"/>
 
@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="눌러서 사진 가져오기"
+            android:textColor="@color/white"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:visibility="visible"
@@ -53,7 +54,7 @@
         android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:text="이름"
         android:layout_below="@+id/userProfileContainer" />

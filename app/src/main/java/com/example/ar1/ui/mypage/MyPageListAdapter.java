@@ -81,7 +81,7 @@ public class MyPageListAdapter extends ArrayAdapter<String> {
         if ("로그아웃".equals(currentItem)) {
             itemButton.setTextColor(Color.RED);
         } else {
-            itemButton.setTextColor(Color.BLACK);
+            itemButton.setTextColor(Color.WHITE);
         }
 
         return itemView;

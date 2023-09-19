@@ -373,7 +373,7 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
         holder.dayOfWeek.setText(dayOfWeekStr);
 
         // 일요일이면 빨간색으로 변경
-        if ("일".equals(dayOfWeekStr)) {
+        if ("일".equals(dayOfWeekStr) || "SUN".equals(dayOfWeekStr)) {
             holder.dateText.setTextColor(Color.RED);
             holder.dayOfWeek.setTextColor(Color.RED);
         } else {

@@ -1,4 +1,5 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -29,7 +30,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="스트레칭 설정"
+            android:text="미션 설정"
             android:layout_marginTop="20dp"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -45,20 +46,22 @@
             android:layout_height="wrap_content"
             android:prompt="@string/select_stretching_option"
             android:theme="@style/MyTimePickerDivider"
-            android:backgroundTint="#FF00DD9B"
+
             />
 
         <TextView
+            android:id="@+id/currunt_count"
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="초기 갯수 입력"
+            android:text="미션 갯수 입력"
             android:textColor="@color/white"
             android:layout_marginTop="30dp"
             android:textSize="16sp"
             android:textStyle="bold"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp"/>
+            android:paddingBottom="8dp"
+            tools:ignore="InvalidId" />
 
         <EditText
             android:paddingLeft="10dp"

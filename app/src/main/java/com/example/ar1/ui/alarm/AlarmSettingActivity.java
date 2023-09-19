@@ -1,6 +1,7 @@
-package com.example.ar1;
+package com.example.ar1.ui.alarm;
 
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -16,9 +17,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,15 +29,21 @@ import java.util.Calendar;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.example.ar1.Alarm;
+import com.example.ar1.BottomActivity;
+import com.example.ar1.R;
+
 
 public class AlarmSettingActivity extends AppCompatActivity {
     private TimePicker timePicker;
     private Button setAlarmButton;
     private Button cancelAlarmButton;
+    TextView curruntcount;
 
     private AlarmDBHelper databaseHelper;
     private Spinner stretchingOptionSpinner;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,16 +57,17 @@ public class AlarmSettingActivity extends AppCompatActivity {
         timePicker = findViewById(R.id.time_picker);
         setAlarmButton = findViewById(R.id.set_alarm_btn);
         cancelAlarmButton = findViewById(R.id.cancel_alarm_btn);
+        curruntcount = findViewById(R.id.currunt_count);
 
 // TimePicker의 NumberPicker를 스피너 모드로 설정
         timePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         stretchingOptionSpinner = findViewById(R.id.stretching_option_spinner);
         // 스트레칭 옵션 배열
-        String[] stretchingOptions = {"스쿼트", "푸쉬업"};
+        String[] stretchingOptions = {"선택안함", "스쿼트", "푸쉬업"};
 
         // 어댑터 생성 및 스트레칭 옵션 배열 설정
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, stretchingOptions);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, stretchingOptions);
 
         // 드롭다운 스피너 스타일 설정
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -175,6 +185,35 @@ public class AlarmSettingActivity extends AppCompatActivity {
                 }
             }
         });
+        String selectedOption = stretchingOptionSpinner.getSelectedItem().toString();
+        stretchingOptionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selectedOption = stretchingOptionSpinner.getSelectedItem().toString();
+                if ("선택안함".equals(selectedOption)) {
+                    curruntcount.setVisibility(View.INVISIBLE);
+                    editText.setVisibility(View.INVISIBLE);
+                    editText.setEnabled(false);
+                    editText.setClickable(false);
+                    editText.setFocusable(false);
+                    editText.setFocusableInTouchMode(false);
+                }else {
+                    editText.setVisibility(View.VISIBLE);
+                    curruntcount.setVisibility(View.VISIBLE);
+                    editText.setEnabled(true);
+                    editText.setClickable(true);
+                    editText.setFocusable(true);
+                    editText.setFocusableInTouchMode(true);
+                }
+
+            }
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing here
+            }
+        });
         cancelAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,7 +264,7 @@ public class AlarmSettingActivity extends AppCompatActivity {
             }
 
             // 알람 정보를 데이터베이스에 저장
-            Alarm alarmModel = new Alarm(0, hour, minute);
+            com.example.ar1.Alarm alarmModel = new com.example.ar1.Alarm(0, hour, minute);
             long alarmId = databaseHelper.addAlarm(alarmModel);
 
             // 알람 매니저를 통해 알람 등록
@@ -273,7 +312,7 @@ public class AlarmSettingActivity extends AppCompatActivity {
             }
 
             // 알람 정보를 데이터베이스에 저장
-            Alarm alarmModel = new Alarm(0, hour, minute);
+            com.example.ar1.Alarm alarmModel = new Alarm(0, hour, minute);
             long alarmId = databaseHelper.addAlarm(alarmModel);
 
             // 알람 매니저를 통해 알람 등록

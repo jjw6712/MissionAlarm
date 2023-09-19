@@ -1,11 +1,8 @@
-package com.example.ar1;
+package com.example.ar1.ui.alarm;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
@@ -14,10 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
@@ -26,16 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.example.ar1.MLkit.MLkitMotion;
+import com.example.ar1.R;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 public class AlarmActivity extends AppCompatActivity {
@@ -47,11 +38,13 @@ public class AlarmActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm", Locale.getDefault());
     private boolean start_motion = false;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_activity);
+
 
         // 이 코드가 화면이 자동으로 꺼지는 것을 막습니다.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -89,7 +82,8 @@ public class AlarmActivity extends AppCompatActivity {
         vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0));
 
         // 알람 ID 받아오기
-        final int alarmId = getIntent().getIntExtra("alarm_id", -1);
+        final String alarmId = String.valueOf(getIntent().getIntExtra("alarm_id", -1));
+        String stretchingOptionSaved = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default");
 
 
 
@@ -108,13 +102,19 @@ public class AlarmActivity extends AppCompatActivity {
                 // 액티비티 종료 시 음량을 원래대로 되돌림
                 //setMediaVolume(AudioManager.USE_DEFAULT_STREAM_TYPE);
 
-                Intent mlkitMotionIntent = new Intent(AlarmActivity.this, MLkitMotion.class);
+                if ("선택안함".equals(stretchingOptionSaved)) { //아무런 미션을 선태하지 않으면 일반 알람처럼 꺼짐
+                    btnStopAlarm.setText("알람끄기");
+                    finish();
+                } else {
 
-                // 알람 ID를 인텐트에 추가
-                mlkitMotionIntent.putExtra("alarm_id", alarmId);
+                    Intent mlkitMotionIntent = new Intent(AlarmActivity.this, MLkitMotion.class);
 
-                startActivity(mlkitMotionIntent);
-                finish();
+                    // 알람 ID를 인텐트에 추가
+                    mlkitMotionIntent.putExtra("alarm_id", alarmId);
+
+                    startActivity(mlkitMotionIntent);
+                    finish();
+                }
             }
         });
     }

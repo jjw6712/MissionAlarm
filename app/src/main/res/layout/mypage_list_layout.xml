@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/black">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
-        android:background="#DDDDDD"/>
+        android:background="@color/black"/>
 
     <!-- 다른 뷰들을 여기에 추가할 수 있습니다. -->
 
@@ -20,5 +20,6 @@
         android:text="버튼"
         android:textStyle="bold"
         android:textSize="20dp"
-        android:background="@color/white"/>
+        android:textColor="@color/white"
+        android:background="@color/black"/>
 </LinearLayout>

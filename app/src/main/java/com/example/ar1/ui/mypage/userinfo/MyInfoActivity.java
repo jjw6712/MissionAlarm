@@ -70,7 +70,7 @@ public class MyInfoActivity extends AppCompatActivity {
         // 상태바 색상 변경
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getResources().getColor(android.R.color.white));
+        window.setStatusBarColor(getResources().getColor(android.R.color.black));
 
         btBack = findViewById(R.id.btBack);
         ivUser = findViewById(R.id.ivUser);

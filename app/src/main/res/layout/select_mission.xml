@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/rounded_button"
+    >
+
+    <ImageView
+        android:id="@+id/missionImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/profile_bubble"
+        android:cropToPadding="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_image"
+        />
+
+    <TextView
+        android:id="@+id/missionName"
+        android:layout_width="247dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingStart="50dp"
+        android:paddingEnd="16dp"
+        android:text="미션"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+
+</LinearLayout>

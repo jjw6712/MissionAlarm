@@ -86,7 +86,7 @@ public class MyPage extends Fragment {
             if (getActivity() != null) {
                 Window window = getActivity().getWindow();
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(getResources().getColor(android.R.color.white));
+                window.setStatusBarColor(getResources().getColor(android.R.color.black));
             }
 
 

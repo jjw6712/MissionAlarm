@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/white"
+    android:background="@color/black"
     >
 
     <Button
@@ -11,6 +11,7 @@
         android:background="@null"
         android:gravity="left|center_vertical"
         android:text="버튼"
+        android:textColor="@color/white"
         android:textSize="15dp"
         android:textStyle="normal" />
 

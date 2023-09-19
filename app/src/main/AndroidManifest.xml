@@ -40,7 +40,7 @@
 
         <!-- 알람 리시버 등록 -->
         <receiver
-            android:name=".AlarmReceiver"
+            android:name=".ui.alarm.AlarmReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -72,9 +72,6 @@
             android:name=".MLkit.MLkitMotion"
             android:exported="false" />
         <activity
-            android:name=".StopWatchT"
-            android:exported="false" />
-        <activity
             android:name=".Login"
             android:exported="true">
             <intent-filter>
@@ -83,9 +80,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AlarmSettingActivity" />
+        <activity android:name=".ui.alarm.AlarmSettingActivity" />
         <activity
-            android:name=".AlarmActivity"
+            android:name=".ui.alarm.AlarmActivity"
             android:excludeFromRecents="true"
             android:showWhenLocked="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
