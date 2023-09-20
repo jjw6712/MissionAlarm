@@ -30,7 +30,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_launcher"
-        android:label="스트레칭 알람"
+        android:label="미션알람"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:screenOrientation="sensor"

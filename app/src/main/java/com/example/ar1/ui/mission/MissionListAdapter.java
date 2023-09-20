@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +66,8 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                     final EditText inputMissionCount = dialogView.findViewById(R.id.editTextMissionCount);
                     Button buttonCancel = dialogView.findViewById(R.id.buttonCancel);
                     Button buttonConfirm = dialogView.findViewById(R.id.buttonConfirm);
+                    // EditText에 InputFilter 적용
+                    inputMissionCount.setFilters(new InputFilter[] { inputFilter });
 
                     final AlertDialog dialog = builder.create();
 
@@ -108,4 +112,24 @@ public class MissionListAdapter extends ArrayAdapter<String> {
 
         return itemView;
     }
+    // EditText에 입력할 수 있는 범위를 1부터 999로 제한하는 InputFilter 생성
+    InputFilter inputFilter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            try {
+                // 입력된 값과 기존 값(혹은 빈 값)을 합쳐서 숫자로 파싱
+                int input = Integer.parseInt(dest.toString() + source.toString());
+
+                // 범위를 1부터 999로 제한
+                if (input >= 1 && input <= 999) {
+                    return null; // 입력 허용
+                } else {
+                    return ""; // 입력 무시
+                }
+            } catch (NumberFormatException e) {
+                // 숫자로 파싱할 수 없는 경우, 입력 무시
+                return "";
+            }
+        }
+    };
 }

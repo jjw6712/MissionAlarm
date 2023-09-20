@@ -663,6 +663,7 @@ public class MLkitMotionDemo extends AppCompatActivity{
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(runnable);
+        if(stop_motion ==true)
             SendToServer();
 
     }
