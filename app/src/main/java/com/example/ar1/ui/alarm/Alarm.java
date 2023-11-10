@@ -101,7 +101,6 @@ public class Alarm extends Fragment {
             actionBar.hide();
         }
 
-
         alarmTimeTv = binding.alarmTimeTv;
         ampmTv = binding.ampmTv;
         setAlarmBtn = binding.setAlarmBtn;

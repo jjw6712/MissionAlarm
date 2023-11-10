@@ -36,6 +36,7 @@ android {
         mlModelBinding true
         viewBinding true
     }
+    namespace 'com.example.ar1'
 }
 
 dependencies {
