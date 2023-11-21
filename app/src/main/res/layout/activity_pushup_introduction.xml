@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/black">
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="푸쉬업"
+        android:gravity="center"
+        android:textSize="35dp"
+        android:textColor="@color/white"/>
+    <ImageView
+        android:id="@+id/squatGifImageView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/pushup" />
+
+    <TextView
+        android:id="@+id/squatDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/squatGifImageView"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:text="1. 카메라를 가로로 눕혀 머리부터 발목까지 몸의 측면을 화면에 비추세요
+        \n2. 뼈대가 인식되면 미션시작 버튼을 누르세요
+        \n3. 양팔은 어깨너비보다 넓게두고 무릎은 바닥에 닿이지 않고 시작합니다.
+        \n4. 팔꿈치를 내리면서 푸쉬업 동작을 진행하고, 팔꿈치를 직각까지 굽히고, 수직까지 펴줍니다.
+        \n5. 시선은 정면을 향하고, 상체는 구부러지지 않도록 펴줍니다."
+        android:lineSpacingExtra="8dp"/>
+
+    <Button
+        android:id="@+id/startSquatMissionButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/squatDescriptionTextView"
+        android:layout_marginTop="20dp"
+        android:text="푸쉬업 미션 시작하기"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:backgroundTint="#FF00DD9B"/>
+
+</RelativeLayout>
