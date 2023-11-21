@@ -1,0 +1,86 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/black">
+
+    <TextView
+        android:id="@+id/tvWordPair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/tvUserSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_below="@id/tvWordPair"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <!-- 스피커 아이콘 버튼 -->
+    <ImageButton
+        android:id="@+id/btnSpeak"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/ic_speaker_on"
+        android:layout_below="@id/tvWordPair"
+        android:layout_toStartOf="@+id/center_anchor"
+        android:layout_marginTop="125dp"
+        android:backgroundTint="@color/black"/>
+
+    <!-- 가운데 기준점 역할을 할 뷰 -->
+    <View
+        android:id="@+id/center_anchor"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvWordPair"
+        android:layout_marginTop="125dp" />
+
+    <!-- 마이크 아이콘 버튼 -->
+    <ImageButton
+        android:id="@+id/btnMic"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/ic_mic_on"
+        android:layout_below="@id/tvWordPair"
+        android:layout_toEndOf="@+id/center_anchor"
+        android:layout_marginTop="125dp"
+        android:backgroundTint="@color/black"/>
+
+    <RelativeLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center"
+        android:background="@android:color/transparent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progressBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="문제 생성중..."
+            android:textSize="18sp"
+            android:textColor="@android:color/black" />
+    </RelativeLayout>
+
+</RelativeLayout>

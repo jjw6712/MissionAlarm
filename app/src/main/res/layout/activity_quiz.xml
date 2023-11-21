@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- 난이도 선택 버튼 -->
+    <Button
+        android:id="@+id/btnSelectDifficulty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="난이도 선택"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <!-- 영어 단어를 표시할 스크롤 뷰 및 레이아웃 -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSelectDifficulty"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/center_guideline"
+        android:layout_marginTop="20dp">
+
+        <LinearLayout
+            android:id="@+id/layoutEnglishWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- 영어 단어 버튼이 여기에 추가됩니다 -->
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 한글 단어를 표시할 스크롤 뷰 및 레이아웃 -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSelectDifficulty"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/center_guideline"
+        android:layout_marginTop="20dp">
+
+        <LinearLayout
+            android:id="@+id/layoutKoreanWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- 한글 단어 버튼이 여기에 추가됩니다 -->
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 중앙 가이드라인 -->
+    <View
+        android:id="@+id/center_guideline"
+        android:layout_width="1dp"
+        android:layout_height="350dp"
+        android:layout_centerHorizontal="true"/>
+
+    <!-- 정답 텍스트를 표시할 레이아웃 -->
+    <LinearLayout
+        android:id="@+id/layoutCorrectAnswers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/center_guideline"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        tools:ignore="NotSibling">
+        <!-- 정답 텍스트 뷰가 여기에 추가될 것입니다 -->
+        <TextView
+            android:id="@+id/tvSelectedWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/center_guideline"
+            android:layout_centerHorizontal="true"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:visibility="visible"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <!-- 로딩 인디케이터 레이아웃 -->
+    <RelativeLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center"
+        android:background="@android:color/transparent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progressBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="문제 생성중..."
+            android:textSize="18sp"
+            android:textColor="@android:color/black" />
+    </RelativeLayout>
+</RelativeLayout>
