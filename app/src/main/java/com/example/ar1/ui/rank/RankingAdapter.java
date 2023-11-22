@@ -71,10 +71,17 @@ public class RankingAdapter extends BaseAdapter {
 
 
         if (currentItem != null) {
-            String completeImageUrl = "https://sw--zqbli.run.goorm.site/uploads" + currentItem.getUserImage().substring("/workspace/SW_18/uploads".length());
-            Log.d(TAG, "어뎁터 이미지URL: "+completeImageUrl);
-            // 이미지 로드 (Glide 라이브러리 사용)
-            Glide.with(context).load(completeImageUrl).apply(new RequestOptions().circleCrop()).into(userImage);
+            String userImagePath = currentItem.getUserImage();
+            if (userImagePath.length() > "/workspace/SW_18/uploads".length()) {
+                String completeImageUrl = "https://sw--zqbli.run.goorm.site/uploads" + userImagePath.substring("/workspace/SW_18/uploads".length());
+                Log.d(TAG, "어뎁터 이미지URL: "+completeImageUrl);
+                // 이미지 로드 (Glide 라이브러리 사용)
+                Glide.with(context).load(completeImageUrl).apply(new RequestOptions().circleCrop()).into(userImage);
+            } else {
+                // 이미지 길이가 충분하지 않을 때, 기본 이미지를 로드
+                Glide.with(context).load(R.drawable.default_profile_image).apply(new RequestOptions().circleCrop()).into(userImage);
+            }
+
             userName.setText(currentItem.getUserName());
             missionCount.setText(String.valueOf(currentItem.getMissionCount()));
         }

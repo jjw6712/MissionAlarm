@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.ar1.MLkit.MLkitMotionDemo;
 import com.example.ar1.R;
+import com.example.ar1.edu.Quiz;
 import com.example.ar1.edu.SpeachSentences;
 import com.example.ar1.edu.SpeachWords;
 import com.example.ar1.ui.graph.PushUpInfo;
@@ -66,6 +67,9 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                 context.startActivity(intent);
             }else if("영문장 발음하기".equals(currentItem)){
                 Intent intent = new Intent(context, SpeachSentences.class);
+                context.startActivity(intent);
+            }else if("영단어 퀴즈퍼즐".equals(currentItem)){
+                Intent intent = new Intent(context, Quiz.class);
                 context.startActivity(intent);
             }
         });
