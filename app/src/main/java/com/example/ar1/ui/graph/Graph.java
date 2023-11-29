@@ -76,6 +76,14 @@ public class Graph extends Fragment {
         // 아이템 리스트에 버튼에 표시할 내용 추가
         itemList.add("스쿼트");
         itemList.add("푸쉬업");
+        itemList.add("만보계(준비중)");
+        itemList.add("털걸이(준비중)");
+        itemList.add("영단어 발음하기");
+        itemList.add("영문장 발음하기");
+        itemList.add("영단어 퀴즈퍼즐");
+        itemList.add("두더지게임(준비중)");
+        itemList.add("파리잡기(준비중)");
+        itemList.add("");
 
         adapter = new MissionListAdapter(getActivity(), itemList);
         listView.setAdapter(adapter);
@@ -280,14 +288,16 @@ public class Graph extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
-
+                    Log.d(TAG, "onResponse: "+responseBody);
                     try {
                         JSONObject jsonObject = new JSONObject(responseBody);
                         final int squatCount = jsonObject.getInt("squatCount");
                         final int pushUpCount = jsonObject.getInt("pushUpCount");
+                        final int speachWordsCount = jsonObject.getInt("speachWordsCount");
+                        final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
                         Log.d(TAG, "스쿼트: "+squatCount);
                         Log.d(TAG, "푸쉬업: "+pushUpCount);
-
+                        //Log.d(TAG, "영단어: "+speachWordsCount);
                         if (getActivity() != null) {  // getActivity() null 체크 추가
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -295,6 +305,8 @@ public class Graph extends Fragment {
                                     if (adapter != null) {  // null 체크 추가
                                         adapter.updateSquatCount(squatCount);
                                         adapter.updatePushUpCount(pushUpCount);
+                                        adapter.updateSpeachWordsCount(speachWordsCount);
+                                        adapter.updateSpeachSentencesCount(speachSentencesCount);
                                     }
                                 }
                             });

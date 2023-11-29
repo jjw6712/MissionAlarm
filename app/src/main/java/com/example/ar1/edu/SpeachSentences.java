@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -42,18 +43,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.ar1.R;
+import com.example.ar1.ui.alarm.AlarmDBHelper;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -83,13 +91,11 @@ public class SpeachSentences extends AppCompatActivity {
     private List<String> englishWords, koreanWords;
     private int currentWordIndex = 0;
     private LinearLayout layoutCorrectAnswers;
-    private static final int VOICE_RECOGNITION_REQUEST_CODE = 100; // 음성 인식 요청 코드 정의
-    private String firstSelectedWord = "";
-    private String secondSelectedWord = "";
+
     // 클래스 레벨 변수로 사용자가 선택한 난이도를 저장
     private String currentLevel = "";
     ImageButton btnSpeak;
-    private static final String MY_SECRET_KEY = "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";
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -151,8 +157,6 @@ public class SpeachSentences extends AppCompatActivity {
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"en-US");
 
-        // 난이도 선택 다이얼로그를 처음에 표시
-        showDifficultyDialog();
         btMic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,7 +182,31 @@ public class SpeachSentences extends AppCompatActivity {
                 }
             }
         });
+        // 선택한 레벨을 받아옴
+        Intent getintent = getIntent();
+        if (getintent != null) {
+            String selectedLevel = getintent.getStringExtra("selected_level");
 
+            // 선택한 레벨에 따라 원하는 동작 수행
+            if (selectedLevel != null) {
+                switch (selectedLevel) {
+                    case "elementary":
+                        // 초급 레벨에 대한 처리
+                        fetchQuizWords("elementary");
+                        break;
+                    case "middle":
+                        // 중급 레벨에 대한 처리
+                        fetchQuizWords("middle");
+                        break;
+                    case "college":
+                        fetchQuizWords("college");
+                        break;
+                    default:
+                        // 예외 처리
+                        break;
+                }
+            }
+        }
     }
     private void stopSttSession() {
         if (mRecognizer != null) {
@@ -187,105 +215,39 @@ public class SpeachSentences extends AppCompatActivity {
         }
     }
 
-    private void showDifficultyDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("난이도 선택");
-        String[] levels = {"초급 - Elementary", "중급 - Middle", "고급 - College"};
-        builder.setItems(levels, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0: // 초급
-                        fetchQuizWords("elementary school level");
-                        break;
-                    case 1: // 중급
-                        fetchQuizWords("high school level");
-                        break;
-                    case 2: // 고급
-                        fetchQuizWords("college level");
-                        break;
-                }
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
     void fetchQuizWords(String level) {
         currentLevel = level; // 사용자가 선택한 난이도 저장
         loadingLayout.setVisibility(View.VISIBLE); // 로딩 화면 표시
-        String message = "Please provide 5 English sentences along with Korean for " + level + " students without additional explanation ";
-        callAPI(message);
+        getWordsFromServer(currentLevel);
     }
 
-    void callAPI(String question){
-        JSONArray arr = new JSONArray();
-        JSONObject baseAi = new JSONObject();
-        JSONObject userMsg = new JSONObject();
-        try {
-            baseAi.put("role", "user");
-            baseAi.put("content", "Quizbot that provides various levels of English words with Korean Result");
-            userMsg.put("role", "user");
-            userMsg.put("content", question);
-            arr.put(baseAi);
-            arr.put(userMsg);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+    private void getWordsFromServer(String level) {
+        OkHttpClient client = new OkHttpClient();
 
-        JSONObject object = new JSONObject();
-        try {
-            object.put("model", "gpt-3.5-turbo");
-            object.put("messages", arr);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-
-        RequestBody body = RequestBody.create(object.toString(), JSON);
         Request request = new Request.Builder()
-                .url("https://api.openai.com/v1/chat/completions")
-                .header("Authorization", "Bearer "+MY_SECRET_KEY)
-                .post(body)
+                .url("https://sw--zqbli.run.goorm.site/getWordstospeachSentences/" + level) // 서버의 엔드포인트 URL
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // 오류 처리 로직
-                        fetchQuizWords(currentLevel);
-                    }
-                });
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                // 오류 처리 로직
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.isSuccessful()){
-                    String result;
-                    try {
-                        JSONObject jsonObject = new JSONObject(response.body().string());
-                        JSONArray jsonArray = jsonObject.getJSONArray("choices");
-                        result = jsonArray.getJSONObject(0).getJSONObject("message").getString("content");
-                        Log.d(TAG, "onResponse: "+result);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                processQuizResponse(result.trim());
-                            }
-                        });
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                } else {
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseData = response.body().string();
+                    Log.d(TAG, "클라우드 리스폰스: "+responseData.trim());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // 오류 처리 로직
-                            fetchQuizWords(currentLevel);
+                            processQuizResponse(responseData.trim());
                         }
                     });
+                } else {
+                    // 오류 처리 로직
                 }
             }
         });
@@ -443,7 +405,7 @@ public class SpeachSentences extends AppCompatActivity {
         builder.setTitle("발음하기 완료");
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_sentences_list, null);
+        View dialogView = inflater.inflate(R.layout.dialog_words_list, null);
         builder.setView(dialogView);
 
         TextView tvWordsList = dialogView.findViewById(R.id.tvWordsList);
@@ -452,11 +414,35 @@ public class SpeachSentences extends AppCompatActivity {
             wordsListBuilder.append(englishWords.get(i)).append(" - ").append(koreanWords.get(i)).append("\n");
         }
         tvWordsList.setText(wordsListBuilder.toString());
+        Intent getintent = getIntent();
+        if (getintent != null) {
+            String selectedLevel = getintent.getStringExtra("selected_level");
 
+            // 선택한 레벨에 따라 원하는 동작 수행
+            if (selectedLevel != null) {
+                switch (selectedLevel) {
+                    case "elementary":
+                        // 초급 레벨에 대한 처리
+                        sendEnglishwordscore("5",wordsListBuilder.toString());
+                        break;
+                    case "middle":
+                        // 중급 레벨에 대한 처리
+                        sendEnglishwordscore("10", wordsListBuilder.toString());
+                        break;
+                    case "college":
+                        sendEnglishwordscore("15", wordsListBuilder.toString());
+                        break;
+                    default:
+                        // 예외 처리
+                        break;
+                }
+            }
+        }
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 클릭시 처리
+
                 finish(); // 혹은 다른 활동으로 이동
             }
         });
@@ -464,26 +450,86 @@ public class SpeachSentences extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+    private void sendEnglishwordscore(String score,  String wordsList) { // 서버로 데이터 보내기
+        OkHttpClient client = new OkHttpClient();
+        SharedPreferences preferences = getSharedPreferences("user_preferences", MODE_PRIVATE);
+        String userId = preferences.getString("userId", ""); //로그인한 유저 id 가져오기
 
-    // 퀴즈를 리셋하는 메소드 (옵션)
-    private void resetQuiz() {
-        currentWordIndex = 0;
-        if (!englishWords.isEmpty() && !koreanWords.isEmpty()) {
-            displayWordPair(englishWords.get(0), koreanWords.get(0));
-        }
+        // 현재 날짜 가져오기
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        String currentDate = sdfDate.format(calendar.getTime());
+
+        // AlarmDBHelper 인스턴스 생성
+        AlarmDBHelper dbHelper = new AlarmDBHelper(this); //sqlite 로컬db 객체 초기화
+
+        // alarmId를 항상 null로 설정
+        String alarmId = "기본모드";
+
+// 현재 날짜와 시간을 구합니다.
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        String currentDateAndTime = sdf.format(new Date());
+
+        HashMap<String, String> data = new HashMap<>(); // 해쉬맵으로 데이터를 구성하기 위한 해쉬맵 객체 초기화
+        data.put("userId", userId); // 로그인한 사용자 ID 삽입
+        data.put("alarmId", alarmId); // 항상 null로 설정
+        data.put("alarmTime", currentDateAndTime); // 현재 날짜와 시간 삽입
+        data.put("missionName", "영문장 발음하기"); // 해당 알람 미션 종류 삽입
+        data.put("missionCount", score); // 해당 알람 미션 완료 갯수 삽입
+        data.put("wordsList", wordsList);
+        Log.d(TAG, ("userId: " + userId + "\nalarmId: " + alarmId + "\nalarmTime: " + currentDateAndTime + "\nmissionMode: " + "영단어 발음하기" + "\nmissionCount: " + score+ "\nwordList"+wordsList));
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        JSONObject jsonObject = new JSONObject(data);
+
+        RequestBody body = RequestBody.create(JSON, jsonObject.toString());
+        String url = "https://sw--zqbli.run.goorm.site/mission"; //앤드포인드  mission으로 리퀘스트 보냄
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+            }
+        });
     }
 
     private Map<String, String> translationMap = new HashMap<>();
 
+
     private void processQuizResponse(String response) {
         loadingLayout.setVisibility(View.GONE); // 로딩 화면 숨김
+        englishWords.clear();
+        koreanWords.clear();
+        // 배열 표기 제거 및 쉼표로 분리
+        response = response.replaceAll("^\\[|\\]$", "");
+        String[] wordPairs = response.split("\",\"");
 
-        String[] lines = response.split("\n");
-        for (String line : lines) {
-            // 숫자와 점 제거
-            String cleanedLine = line.replaceFirst("^\\d+\\.\\s*", "");
-
+        for (String wordPair : wordPairs) {
             String englishWord = "", koreanWord = "";
+            // 따옴표 제거
+            wordPair = wordPair.trim().replaceAll("^\"|\"$", "");
+            // 물음표를 마침표로 바꾸기
+            wordPair = wordPair.replace("?", ".");
+
+            // "영어문장. 한글문장" 형식 처리
+            if (englishWord.isEmpty() && koreanWord.isEmpty()) {
+                String[] parts = wordPair.split("\\.\\s+");
+                if (parts.length == 2) {
+                    englishWord = parts[0].trim();
+                    koreanWord = parts[1].trim();
+                }
+            }
+            // 숫자와 점 제거
+            String cleanedLine = wordPair.replaceFirst("^\\d+\\.\\s*", "");
+
 
             // 레이블 형식 처리
             if (cleanedLine.contains("English:") && cleanedLine.contains("Korean:")) {
@@ -503,6 +549,14 @@ public class SpeachSentences extends AppCompatActivity {
                 englishWord = parts[0].trim();
                 koreanWord = parts[1].trim();
             }
+            // 기본 형식 처리: "영어. 한글"
+            else {
+                String[] parts = cleanedLine.split("\\.\\s+");
+                if (parts.length == 2) {
+                    englishWord = parts[0].trim();
+                    koreanWord = parts[1].trim();
+                }
+            }
 
             // 문장 끝의 마침표 제거
             englishWord = englishWord.replaceAll("\\.$", "");
@@ -516,9 +570,27 @@ public class SpeachSentences extends AppCompatActivity {
         }
 
         if (englishWords.size() >= 5 && koreanWords.size() >= 5) {
-            displayWordPair(englishWords.get(0), koreanWords.get(0));
+            // 첫 번째 단어가 한글인 경우 순서 변경
+            if (Character.isLetter(koreanWords.get(0).charAt(0)) && Character.UnicodeBlock.of(koreanWords.get(0).charAt(0)).equals(Character.UnicodeBlock.HANGUL_SYLLABLES)) {
+                for (int i = 0; i < englishWords.size(); i++) {
+                    String word = englishWords.get(i);
+                    word = word.replace("-", "").replace(",", "").replace("?", ""); // 기호 제거
+                    englishWords.set(i, word);
+                }
+                displayWordPair(englishWords.get(0), koreanWords.get(0));
+            } else {
+                List<String> temp = koreanWords;
+                koreanWords = englishWords;
+                englishWords = temp;
+                for (int i = 0; i < englishWords.size(); i++) {
+                    String word = englishWords.get(i);
+                    word = word.replace("-", "").replace(",", ""); // 기호 제거
+                    englishWords.set(i, word);
+                }
+                displayWordPair(englishWords.get(0), koreanWords.get(0));
+            }
         } else {
-            fetchQuizWords(currentLevel); // 유효한 단어 쌍이 충분하지 않으면 다시 호출
+            //fetchQuizWords(currentLevel); // 유효한 단어 쌍이 충분하지 않으면 다시 호출
         }
     }
 

@@ -24,6 +24,8 @@ public class MissionListAdapter extends ArrayAdapter<String> {
     private Context context;
     private int squatCount = 0; // 스쿼트 카운트
     private int pushUpCount = 0; // 푸쉬업 카운트
+    private  int speachWordsCount = 0;
+    private  int speachSentencesCount = 0;
 
     public MissionListAdapter(Context context, List<String> items) {
         super(context, 0, items);
@@ -35,12 +37,18 @@ public class MissionListAdapter extends ArrayAdapter<String> {
         this.squatCount = newCount;
         notifyDataSetChanged();
     }
-
     public void updatePushUpCount(int newCount) {
         this.pushUpCount = newCount;
         notifyDataSetChanged();
     }
-
+    public void updateSpeachWordsCount(int newCount) {
+        this.speachWordsCount = newCount;
+        notifyDataSetChanged();
+    }
+    public void updateSpeachSentencesCount(int newCount) {
+        this.speachSentencesCount = newCount;
+        notifyDataSetChanged();
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View itemView = convertView;
@@ -57,8 +65,15 @@ public class MissionListAdapter extends ArrayAdapter<String> {
 
         if ("스쿼트".equals(currentItem)) {
             tvCount.setText(String.valueOf(squatCount));
-        } else if ("푸쉬업".equals(currentItem)) {
+        }
+        if ("푸쉬업".equals(currentItem)) {
             tvCount.setText(String.valueOf(pushUpCount));
+        }
+        if ("영단어 발음하기".equals(currentItem)) {
+            tvCount.setText(String.valueOf(speachWordsCount));
+        }
+        if ("영문장 발음하기".equals(currentItem)) {
+            tvCount.setText(String.valueOf(speachSentencesCount));
         }
 
         itemButton.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +84,9 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                     context.startActivity(intent);
                 } else if ("푸쉬업".equals(currentItem)) {
                     Intent intent = new Intent(context, PushUpInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
+                    context.startActivity(intent);
+                }else if ("영단어 발음하기".equals(currentItem)) {
+                    Intent intent = new Intent(context, SpeachWordsInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
                     context.startActivity(intent);
                 }
             }

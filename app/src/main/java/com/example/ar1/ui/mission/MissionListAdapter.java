@@ -63,10 +63,10 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                 Intent intent = new Intent(context, PushupIntroductionActivity.class);
                 context.startActivity(intent);
             }else if("영단어 발음하기".equals(currentItem)){
-                Intent intent = new Intent(context, SpeachWords.class);
+                Intent intent = new Intent(context, SpeachWordsIntroductionActivity.class);
                 context.startActivity(intent);
             }else if("영문장 발음하기".equals(currentItem)){
-                Intent intent = new Intent(context, SpeachSentences.class);
+                Intent intent = new Intent(context, SpeachSentencesIntroductionActivity.class);
                 context.startActivity(intent);
             }else if("영단어 퀴즈퍼즐".equals(currentItem)){
                 Intent intent = new Intent(context, Quiz.class);

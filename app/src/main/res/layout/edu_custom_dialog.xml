@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="난이도 선택"
+        android:textSize="30sp"
+        android:textColor="#FF00DD9B"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroupLevels"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioElementary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="초급 - Elementary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical" />
+
+        <RadioButton
+            android:id="@+id/radioMiddle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="중급 - Middle"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"/>
+
+        <RadioButton
+            android:id="@+id/radioCollege"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="고급 - College"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="#FF00DD9B"
+            android:text="취소"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            />
+
+        <Button
+            android:id="@+id/buttonConfirm"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="#FF00DD9B"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            android:text="확인"/>
+
+    </LinearLayout>
+</LinearLayout>

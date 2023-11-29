@@ -20,7 +20,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SQUAT"
+        android:text="스쿼트"
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
         android:textSize="35dp"

@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/black">
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="영단어 발음하기"
+        android:gravity="center"
+        android:textSize="35dp"
+        android:textColor="@color/white"/>
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="20dp"
+         />
+
+    <TextView
+        android:id="@+id/squatDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/videoView"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:text="1. 스피커 버튼을 눌러 영단어의 스펠링을 들어보세요
+        \n2. 마이크 버튼을 눌러 해당 영단어를 읽어보세요
+        \n3. 올바르게 발음했다면 정답입니다.
+        \n4. 오답이라면 다시 마이크 버튼을 눌러 발음하세요
+        \n5. 5개의 문제를 통과하면 오늘의 단어장으로 복습해 보세요"
+        android:lineSpacingExtra="8dp"/>
+
+    <Button
+        android:id="@+id/startSquatMissionButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/squatDescriptionTextView"
+        android:layout_marginTop="20dp"
+        android:text="영단어 발음하기 미션 시작하기"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:backgroundTint="#FF00DD9B"/>
+
+</RelativeLayout>

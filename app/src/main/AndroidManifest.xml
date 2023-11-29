@@ -43,6 +43,10 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ui.graph.WordListActivity"/>
+        <activity android:name=".ui.graph.SpeachWordsInfo"/>
+        <activity android:name=".ui.mission.SpeachSentencesIntroductionActivity"/>
+        <activity android:name=".ui.mission.SpeachWordsIntroductionActivity"/>
         <activity android:name=".ui.graph.SquatInfo"
             tools:ignore="Instantiatable" />
         <activity android:name=".edu.Quiz"/>

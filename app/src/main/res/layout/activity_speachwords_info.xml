@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.graph.SquatInfo"
+    android:background="@color/black">
+
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="영단어 발음하기"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="35dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/btnTodayWords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오늘의 단어장"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:background="@drawable/rounded_button_mint"/>
+
+    <Button
+        android:id="@+id/btnWeekWords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="금주의 단어장"
+        android:textSize="30sp"
+        android:textColor="@color/white"
+        android:layout_below="@+id/btnTodayWords"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button_mint"/>
+
+    <Button
+        android:id="@+id/btnMonthWords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="금월의 단어장"
+        android:textSize="30sp"
+        android:textColor="@color/white"
+        android:layout_below="@+id/btnWeekWords"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button_mint"/>
+
+
+
+
+</RelativeLayout>
