@@ -297,6 +297,8 @@ public class Graph extends Fragment {
                         final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
                         Log.d(TAG, "스쿼트: "+squatCount);
                         Log.d(TAG, "푸쉬업: "+pushUpCount);
+                        Log.d(TAG, "영단어: "+speachWordsCount);
+                        Log.d(TAG, "영문장: "+speachSentencesCount);
                         //Log.d(TAG, "영단어: "+speachWordsCount);
                         if (getActivity() != null) {  // getActivity() null 체크 추가
                             getActivity().runOnUiThread(new Runnable() {
@@ -461,6 +463,8 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                         JSONObject jsonObject = new JSONObject(responseBody);
                         final int squatCount = jsonObject.getInt("squatCount");
                         final int pushUpCount = jsonObject.getInt("pushUpCount");
+                        final int speachWordsCount = jsonObject.getInt("speachWordsCount");
+                        final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
                         Log.d(TAG, "어뎁터 스쿼트: "+squatCount);
                         Log.d(TAG, "어뎁터 푸쉬업: "+pushUpCount);
 
@@ -470,6 +474,8 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                                 if (adapter != null) {
                                     adapter.updateSquatCount(squatCount);
                                     adapter.updatePushUpCount(pushUpCount);
+                                    adapter.updateSpeachWordsCount(speachWordsCount);
+                                    adapter.updateSpeachSentencesCount(speachSentencesCount);
                                 }
                             }
                         });
