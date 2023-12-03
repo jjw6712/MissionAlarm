@@ -1,14 +1,11 @@
 package com.example.ar1.ui.graph;
 
-import static android.content.ContentValues.TAG;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -32,10 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,7 +42,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class WordListActivity extends AppCompatActivity {
+public class QuizListActivity extends AppCompatActivity {
     private Button btnBeginner, btnIntermediate, btnAdvanced;
     private ListView lvWordList;
     private ArrayAdapter<String> adapter;
@@ -62,7 +57,7 @@ public class WordListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_word_list);
+        setContentView(R.layout.activity_quiz_list);
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
@@ -82,11 +77,11 @@ public class WordListActivity extends AppCompatActivity {
         tvtitle = findViewById(R.id.tvtitle);
         runOnUiThread(() -> {
             if ("today".equals(timeFrame)) {
-                tvtitle.setText("오늘의 영단어");
+                tvtitle.setText("오늘의 단어장");
             } else if ("week".equals(timeFrame)) {
-                tvtitle.setText("금주의 영단어");
+                tvtitle.setText("금주의 단어장");
             } else if ("month".equals(timeFrame)) {
-                tvtitle.setText("금월의 영단어");
+                tvtitle.setText("금월의 단어장");
             }
         });
         wordsList = new ArrayList<>();
@@ -176,7 +171,7 @@ public class WordListActivity extends AppCompatActivity {
     }
     private void fetchWords(String userId, String missionCount, String timeFrame) {
         OkHttpClient client = new OkHttpClient();
-        String url = "https://sw--zqbli.run.goorm.site/getWordsList";
+        String url = "https://sw--zqbli.run.goorm.site/getQuizList";
 
         RequestBody formBody = new FormBody.Builder()
                 .add("userId", userId)

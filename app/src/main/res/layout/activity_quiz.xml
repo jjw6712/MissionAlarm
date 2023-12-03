@@ -3,25 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
-
-    <!-- 난이도 선택 버튼 -->
-    <Button
-        android:id="@+id/btnSelectDifficulty"
+    android:padding="16dp"
+    android:background="@color/black">
+    <TextView
+        android:id="@+id/tvlevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="난이도 선택"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:text="난이도: "
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 
     <!-- 영어 단어를 표시할 스크롤 뷰 및 레이아웃 -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnSelectDifficulty"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/center_guideline"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="40dp">
 
         <LinearLayout
             android:id="@+id/layoutEnglishWords"
@@ -36,10 +34,9 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnSelectDifficulty"
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@+id/center_guideline"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="40dp">
 
         <LinearLayout
             android:id="@+id/layoutKoreanWords"
@@ -65,7 +62,7 @@
         android:orientation="vertical"
         android:layout_below="@id/center_guideline"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="60dp"
         tools:ignore="NotSibling">
         <!-- 정답 텍스트 뷰가 여기에 추가될 것입니다 -->
         <TextView
@@ -76,7 +73,7 @@
             android:layout_centerHorizontal="true"
             android:textSize="30sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:visibility="visible"
             android:layout_gravity="center"/>
     </LinearLayout>
@@ -104,6 +101,6 @@
             android:layout_marginTop="20dp"
             android:text="문제 생성중..."
             android:textSize="18sp"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/white" />
     </RelativeLayout>
 </RelativeLayout>

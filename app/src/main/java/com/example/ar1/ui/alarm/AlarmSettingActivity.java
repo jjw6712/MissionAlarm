@@ -1,6 +1,8 @@
 package com.example.ar1.ui.alarm;
 
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -19,11 +21,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Calendar;
 import android.widget.ArrayAdapter;
@@ -32,17 +38,23 @@ import android.widget.Spinner;
 import com.example.ar1.Alarm;
 import com.example.ar1.BottomActivity;
 import com.example.ar1.R;
+import com.example.ar1.alarmmission.AlarmMissionActivity;
 
 
 public class AlarmSettingActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_MISSION = 1; // 미션 요청 코드 상수 정의
+
     private TimePicker timePicker;
     private Button setAlarmButton;
     private Button cancelAlarmButton;
     TextView curruntcount;
 
     private AlarmDBHelper databaseHelper;
-    private Spinner stretchingOptionSpinner;
-
+    private Button btmissionselect;
+    String missionName, missionLevel;
+    String missionCount;
+    private CheckBox cbPowerMode;
+    private boolean isPowerModeEnabled;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,27 +65,32 @@ public class AlarmSettingActivity extends AppCompatActivity {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
-
+        cbPowerMode = findViewById(R.id.cbpowermode);
         timePicker = findViewById(R.id.time_picker);
         setAlarmButton = findViewById(R.id.set_alarm_btn);
         cancelAlarmButton = findViewById(R.id.cancel_alarm_btn);
         curruntcount = findViewById(R.id.currunt_count);
+// 체크박스 상태 변경 리스너 설정
+        cbPowerMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isPowerModeEnabled = isChecked; // 체크박스의 상태에 따라 변수 업데이트
+            }
+        });
+
+        // 초기 상태 업데이트
+        isPowerModeEnabled = cbPowerMode.isChecked();
 
 // TimePicker의 NumberPicker를 스피너 모드로 설정
         timePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-        stretchingOptionSpinner = findViewById(R.id.stretching_option_spinner);
-        // 스트레칭 옵션 배열
-        String[] stretchingOptions = {"선택안함", "스쿼트", "푸쉬업"};
+        btmissionselect = findViewById(R.id.btmissionselect);
+        btmissionselect.setOnClickListener(v -> {
+            // AlarmMissionActivity 호출
+            Intent intent = new Intent(AlarmSettingActivity.this, AlarmMissionActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_MISSION);
+        });
 
-        // 어댑터 생성 및 스트레칭 옵션 배열 설정
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, stretchingOptions);
-
-        // 드롭다운 스피너 스타일 설정
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // 스피너에 어댑터 설정
-        stretchingOptionSpinner.setAdapter(adapter);
 
 // TimePicker에 더블 클릭 이벤트 리스너 등록
         timePicker.setOnTouchListener(new View.OnTouchListener() {
@@ -95,39 +112,7 @@ public class AlarmSettingActivity extends AppCompatActivity {
             }
         });
 
-        //스트레칭 초기 횟수 부정입력 방지를 위한 텍스트 와쳐 매서드
-        EditText editText = findViewById(R.id.st_count_init);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // 텍스트가 변경되기 전에 호출됨
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // 텍스트가 변경되는 동안 호출됨
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // 텍스트가 변경된 후에 호출됨
-                String editTextValue = s.toString(); // 에딧 텍스트의 값을 문자열로 받아옴
-                int numberOfStretching;
-
-                try {
-                    numberOfStretching = Integer.parseInt(editTextValue); // 에딧 텍스트의 값을 숫자로 변환
-                } catch (NumberFormatException e) {
-                    // 에딧 텍스트의 값이 숫자가 아닌 경우
-                    Toast.makeText(AlarmSettingActivity.this, "숫자를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // 사용자가 입력한 스트레칭 횟수가 5 미만이거나 너무 큰 값인 경우
-                if (numberOfStretching < 5 || numberOfStretching > 100) {
-                    Toast.makeText(AlarmSettingActivity.this, "5 이상 99 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         databaseHelper = new AlarmDBHelper(this);
         // onCreate() 메소드 내부에서 Intent에서 시간과 분 값을 추출하는 예시 코드
@@ -150,23 +135,7 @@ public class AlarmSettingActivity extends AppCompatActivity {
         setAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editText = findViewById(R.id.st_count_init); // 에딧 텍스트 참조
-                String editTextValue = editText.getText().toString(); // 에딧 텍스트의 값을 문자열로 받아옴
-                int numberOfStretching;
 
-                try {
-                    numberOfStretching = Integer.parseInt(editTextValue); // 에딧 텍스트의 값을 숫자로 변환
-                } catch (NumberFormatException e) {
-                    // 에딧 텍스트의 값이 숫자가 아닌 경우
-                    Toast.makeText(AlarmSettingActivity.this, "유효한 숫자를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // 사용자가 입력한 스트레칭 횟수가 5 미만이거나 너무 큰 값인 경우
-                if (numberOfStretching < 5 || numberOfStretching > 100) {
-                    Toast.makeText(AlarmSettingActivity.this, "5 이상 100 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
                     int hour = timePicker.getHour();
                     int minute = timePicker.getMinute();
 
@@ -183,37 +152,9 @@ public class AlarmSettingActivity extends AppCompatActivity {
 
                     finish();
                 }
-            }
+
         });
-        String selectedOption = stretchingOptionSpinner.getSelectedItem().toString();
-        stretchingOptionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                String selectedOption = stretchingOptionSpinner.getSelectedItem().toString();
-                if ("선택안함".equals(selectedOption)) {
-                    curruntcount.setVisibility(View.INVISIBLE);
-                    editText.setVisibility(View.INVISIBLE);
-                    editText.setEnabled(false);
-                    editText.setClickable(false);
-                    editText.setFocusable(false);
-                    editText.setFocusableInTouchMode(false);
-                }else {
-                    editText.setVisibility(View.VISIBLE);
-                    curruntcount.setVisibility(View.VISIBLE);
-                    editText.setEnabled(true);
-                    editText.setClickable(true);
-                    editText.setFocusable(true);
-                    editText.setFocusableInTouchMode(true);
-                }
 
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // Do nothing here
-            }
-        });
         cancelAlarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,9 +164,37 @@ public class AlarmSettingActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_MISSION && resultCode == RESULT_OK && data != null) {
+            // 결과 데이터에서 미션 정보 가져오기
+            missionName = data.getStringExtra("missionName");
+            missionCount = data.getStringExtra("missionCount");
+           //missionLevel = data.getStringExtra("missionLevel");
+            Log.d(TAG, "난이도: "+ missionCount);
+
+            // 여기서 미션 정보를 사용하거나 저장
+            // 예: TextView에 미션 이름과 횟수 표시
+            if("푸쉬업".equals(missionName) || "스쿼트".equals(missionName)) {
+                curruntcount.setText("선택 미션: " + missionName + " \n횟수: " + missionCount + "회");
+            } else if ("영단어 발음하기".equals(missionName)||"영문장 발음하기".equals(missionName)||"영단어 퀴즈퍼즐".equals(missionName)) {
+                if("elementary".equals(missionCount)) {
+                    curruntcount.setText("선택 미션: " + missionName + " \n난이도: " + "초급");
+                }else if("middle".equals(missionCount)) {
+                    curruntcount.setText("선택 미션: " + missionName + " \n난이도: " + "중급");
+                }else if("college".equals(missionCount)) {
+                    curruntcount.setText("선택 미션: " + missionName + " \n난이도: " + "고급");
+                }
+            } else if ("만보계".equals(missionName)) {
+                curruntcount.setText("선택 미션: " + missionName + " \n횟수: " + missionCount + "보");
+            }
+        }
+
+    }
     private void setAlarm(int hour, int minute) {
-        EditText editText = findViewById(R.id.st_count_init);
-        Spinner stretchingOptionSpinner = findViewById(R.id.stretching_option_spinner);
+
+        btmissionselect = findViewById(R.id.btmissionselect);
         SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
         Intent intent = getIntent();
 
@@ -281,11 +250,13 @@ public class AlarmSettingActivity extends AppCompatActivity {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeCalendar.getTimeInMillis(), pendingIntent);
             }
             // MLkitMotion 클래스로 선택된 모드 플래그 전송
-            String selectedOption = stretchingOptionSpinner.getSelectedItem().toString();
-            String selectedCount = editText.getText().toString();
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("selected_stretching_mode_" + alarmId, selectedOption);
-            editor.putString("selected_stretching_count_" + alarmId, selectedCount);
+            editor.putString("selected_stretching_mode_" + alarmId, missionName);
+            editor.putString("selected_stretching_count_" + alarmId, String.valueOf(missionCount));
+            editor.putBoolean("PowerMode", isPowerModeEnabled);
+            editor.putLong("alarmId", alarmId);
+            Log.d(TAG, "파워모드: "+isPowerModeEnabled);
             editor.apply();
             String stretchingOptionSaved = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default");
             Log.d("TAG", "Saved stretching option edit: " + stretchingOptionSaved);
@@ -330,11 +301,13 @@ public class AlarmSettingActivity extends AppCompatActivity {
             }
 
             // MLkitMotion 클래스로 선택된 모드 플래그 전송
-            String selectedOption = stretchingOptionSpinner.getSelectedItem().toString();
-            String selectedCount = editText.getText().toString();
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("selected_stretching_mode_" + alarmId, selectedOption);
-            editor.putString("selected_stretching_count_" + alarmId, selectedCount);
+            editor.putString("selected_stretching_mode_" + alarmId, missionName);
+            editor.putString("selected_stretching_count_" + alarmId, String.valueOf(missionCount));
+            editor.putBoolean("PowerMode", isPowerModeEnabled);
+            editor.putLong("alarmId", alarmId);
+            Log.d(TAG, "파워모드: "+isPowerModeEnabled);
             editor.apply();
             String stretchingOptionSaved = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default");
 

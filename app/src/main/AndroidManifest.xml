@@ -20,7 +20,11 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
+    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="true" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -42,7 +46,39 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".pedometer.MyReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".pedometer.HourlyUpdateReceiver" />
+        <receiver android:name=".pedometer.MidnightResetReceiver"/>
+        <service android:name=".pedometer.MyService"
+            android:stopWithTask="false" />
 
+
+
+        <activity android:name=".alarmmission.AlarmPedometerActivity"/>
+        <activity android:name=".alarmmission.AlarmPedometerIntroductionActivity"/>
+        <activity android:name=".pedometer.MainActivity"/>
+        <activity android:name=".alarmmission.AlarmQuiz"/>
+        <activity android:name=".alarmmission.AlarmSpeachSentences"/>
+        <activity android:name=".alarmmission.AlarmSpeachWords"/>
+        <activity android:name=".alarmmission.AlarmSquatIntroductionActivity"/>
+        <activity android:name=".alarmmission.AlarmQuizIntroductionActivity"/>
+        <activity android:name=".alarmmission.AlarmSpeachWordsIntroductionActivity"/>
+        <activity android:name=".alarmmission.AlarmSpeachSentencesIntroductionActivity"/>
+        <activity android:name=".alarmmission.AlarmPushupIntroductionActivity"/>
+        <activity android:name=".alarmmission.AlarmMissionActivity"/>
+        <activity android:name=".ui.graph.QuizListActivity"/>
+        <activity android:name=".ui.graph.QuizInfo"/>
+        <activity android:name=".ui.mission.QuizIntroductionActivity"/>
+        <activity android:name=".ui.graph.SentencesListActivity"/>
+        <activity android:name=".ui.graph.SpeachSentencesInfo"/>
         <activity android:name=".ui.graph.WordListActivity"/>
         <activity android:name=".ui.graph.SpeachWordsInfo"/>
         <activity android:name=".ui.mission.SpeachSentencesIntroductionActivity"/>

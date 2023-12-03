@@ -26,6 +26,7 @@ public class MissionListAdapter extends ArrayAdapter<String> {
     private int pushUpCount = 0; // 푸쉬업 카운트
     private  int speachWordsCount = 0;
     private  int speachSentencesCount = 0;
+    private  int quizCount = 0;
 
     public MissionListAdapter(Context context, List<String> items) {
         super(context, 0, items);
@@ -47,6 +48,10 @@ public class MissionListAdapter extends ArrayAdapter<String> {
     }
     public void updateSpeachSentencesCount(int newCount) {
         this.speachSentencesCount = newCount;
+        notifyDataSetChanged();
+    }
+    public void updateQuizCount(int newCount) {
+        this.quizCount = newCount;
         notifyDataSetChanged();
     }
     @Override
@@ -75,7 +80,9 @@ public class MissionListAdapter extends ArrayAdapter<String> {
         if ("영문장 발음하기".equals(currentItem)) {
             tvCount.setText(String.valueOf(speachSentencesCount));
         }
-
+        if ("영단어 퀴즈퍼즐".equals(currentItem)) {
+            tvCount.setText(String.valueOf(quizCount));
+        }
         itemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,6 +94,12 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                     context.startActivity(intent);
                 }else if ("영단어 발음하기".equals(currentItem)) {
                     Intent intent = new Intent(context, SpeachWordsInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
+                    context.startActivity(intent);
+                }else if ("영문장 발음하기".equals(currentItem)) {
+                    Intent intent = new Intent(context, SpeachSentencesInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
+                    context.startActivity(intent);
+                }else if ("영단어 퀴즈퍼즐".equals(currentItem)) {
+                    Intent intent = new Intent(context, QuizInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
                     context.startActivity(intent);
                 }
             }

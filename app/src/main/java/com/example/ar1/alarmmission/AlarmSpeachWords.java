@@ -1,4 +1,4 @@
-package com.example.ar1.edu;
+package com.example.ar1.alarmmission;
 
 import static android.content.ContentValues.TAG;
 
@@ -21,22 +21,18 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,8 +42,6 @@ import com.example.ar1.R;
 import com.example.ar1.ui.alarm.AlarmDBHelper;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -71,7 +65,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class SpeachWords extends AppCompatActivity {
+public class AlarmSpeachWords extends AppCompatActivity {
     private boolean isSttListening = false;
     private boolean isTtsSpeaking = false;
     final int PERMISSION = 1;
@@ -84,8 +78,8 @@ public class SpeachWords extends AppCompatActivity {
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private RelativeLayout loadingLayout;
     private TextToSpeech textToSpeech;
-    TextView tvSelectedWord, tvlevel;
-    private TextView tvWordPair, tvUserSpeech;
+    TextView tvSelectedWord;
+    private TextView tvlevel, tvUserSpeech;
     private List<String> englishWords, koreanWords;
     private int currentWordIndex = 0;
     private LinearLayout layoutCorrectAnswers;
@@ -93,8 +87,10 @@ public class SpeachWords extends AppCompatActivity {
     // 클래스 레벨 변수로 사용자가 선택한 난이도를 저장
     private String currentLevel = "";
     ImageButton btnSpeak;
-    private static final String MY_SECRET_KEY = "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";
+    private int alarmId;
 
+    String selectedLevel;
+    boolean isPowerModeEnabled;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,13 +112,13 @@ public class SpeachWords extends AppCompatActivity {
                 .writeTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .build();
-        tvlevel = findViewById(R.id.tvlevel);
+
         layoutEnglishWords = findViewById(R.id.layoutEnglishWords);
         layoutKoreanWords = findViewById(R.id.layoutKoreanWords);
         loadingLayout = findViewById(R.id.loadingLayout);
         tvSelectedWord = findViewById(R.id.tvSelectedWord);
         layoutCorrectAnswers = findViewById(R.id.layoutCorrectAnswers);
-        tvWordPair = findViewById(R.id.tvWordPair);
+        tvlevel = findViewById(R.id.tvlevel);
         tvUserSpeech = findViewById(R.id.tvUserSpeech);
         btMic = findViewById(R.id.btnMic);
         btnSpeak = findViewById(R.id.btnSpeak);
@@ -164,7 +160,7 @@ public class SpeachWords extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isTtsSpeaking) {
-                    mRecognizer = SpeechRecognizer.createSpeechRecognizer(SpeachWords.this);
+                    mRecognizer = SpeechRecognizer.createSpeechRecognizer(AlarmSpeachWords.this);
                     mRecognizer.setRecognitionListener(listener);
                     mRecognizer.startListening(intent);
                     mRecognizer.startListening(intent);
@@ -181,14 +177,15 @@ public class SpeachWords extends AppCompatActivity {
                     }, 2000);
 
                 } else {
-                    Toast.makeText(SpeachWords.this, "듣기가 끝난 후에 시도하세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AlarmSpeachWords.this, "듣기가 끝난 후에 시도하세요.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        // 선택한 레벨을 받아옴
-        Intent getintent = getIntent();
-        if (getintent != null) {
-            String selectedLevel = getintent.getStringExtra("selected_level");
+        SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
+        alarmId = getIntent().getIntExtra("alarm_id", -1); // 알람 ID 받아오기
+        selectedLevel = sharedPreferences.getString("selected_stretching_count_" + alarmId, "default");
+        isPowerModeEnabled = sharedPreferences.getBoolean("PowerMode", false);
+
             // 선택한 레벨에 따라 원하는 동작 수행
             if (selectedLevel != null) {
                 switch (selectedLevel) {
@@ -212,7 +209,8 @@ public class SpeachWords extends AppCompatActivity {
                 }
             }
         }
-    }
+
+
     private void stopSttSession() {
         if (mRecognizer != null) {
             mRecognizer.stopListening();
@@ -423,7 +421,6 @@ public class SpeachWords extends AppCompatActivity {
         tvWordsList.setText(wordsListBuilder.toString());
         Intent getintent = getIntent();
         if (getintent != null) {
-            String selectedLevel = getintent.getStringExtra("selected_level");
 
             // 선택한 레벨에 따라 원하는 동작 수행
             if (selectedLevel != null) {
@@ -469,8 +466,7 @@ public class SpeachWords extends AppCompatActivity {
         // AlarmDBHelper 인스턴스 생성
         AlarmDBHelper dbHelper = new AlarmDBHelper(this); //sqlite 로컬db 객체 초기화
 
-        // alarmId를 항상 null로 설정
-        String alarmId = "기본모드";
+
 
 // 현재 날짜와 시간을 구합니다.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
@@ -478,7 +474,7 @@ public class SpeachWords extends AppCompatActivity {
 
         HashMap<String, String> data = new HashMap<>(); // 해쉬맵으로 데이터를 구성하기 위한 해쉬맵 객체 초기화
         data.put("userId", userId); // 로그인한 사용자 ID 삽입
-        data.put("alarmId", alarmId); // 항상 null로 설정
+        data.put("alarmId", String.valueOf(alarmId)); // 항상 null로 설정
         data.put("alarmTime", currentDateAndTime); // 현재 날짜와 시간 삽입
         data.put("missionName", "영단어 발음하기"); // 해당 알람 미션 종류 삽입
         data.put("missionCount", score); // 해당 알람 미션 완료 갯수 삽입
@@ -616,4 +612,24 @@ public class SpeachWords extends AppCompatActivity {
             btnSpeak.setImageResource(R.drawable.ic_speaker_off); // 비활성화 이미지로 변경
         }
     }
+    @Override
+    public void onBackPressed() {
+        if (!isPowerModeEnabled) {
+            super.onBackPressed(); // 파워 모드가 비활성화되어 있으면 기본 뒤로 가기 기능 수행
+        } else {
+            // 파워 모드가 활성화되어 있으면 토스트 메시지 표시
+            Toast.makeText(this, "뒤로 가기 버튼이 비활성화되었습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (isPowerModeEnabled) {
+            startActivity(intent);
+        }
+
+    }
+
 }

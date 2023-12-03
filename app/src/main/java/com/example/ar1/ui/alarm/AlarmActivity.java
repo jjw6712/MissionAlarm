@@ -2,6 +2,7 @@ package com.example.ar1.ui.alarm;
 
 import static androidx.fragment.app.FragmentManager.TAG;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ar1.MLkit.MLkitMotion;
 import com.example.ar1.R;
+import com.example.ar1.alarmmission.AlarmPedometerActivity;
+import com.example.ar1.alarmmission.AlarmQuiz;
+import com.example.ar1.alarmmission.AlarmSpeachSentences;
+import com.example.ar1.alarmmission.AlarmSpeachWords;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,6 +50,7 @@ public class AlarmActivity extends AppCompatActivity {
     String stretchingOptionSaved;
     private SharedPreferences sharedPreferences;
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,11 +101,53 @@ public class AlarmActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "알람 아이디가 유효하지 않습니다.");
         }
-        if ("선택안함".equals(stretchingOptionSaved)) { //아무런 미션을 선태하지 않으면 일반 알람처럼 꺼짐
+        if ("default".equals(stretchingOptionSaved)) { //아무런 미션을 선태하지 않으면 일반 알람처럼 꺼짐
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     btnStopAlarm.setText("알람끄기");
+                }
+            });
+        }else if ("푸쉬업".equals(stretchingOptionSaved)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btnStopAlarm.setText("푸쉬업 미션 시작하기");
+                }
+            });
+        }else if ("스쿼트".equals(stretchingOptionSaved)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btnStopAlarm.setText("스쿼트 미션 시작하기");
+                }
+            });
+        }else if ("영단어 발음하기".equals(stretchingOptionSaved)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btnStopAlarm.setText("영단어 발음하기 미션 시작하기");
+                }
+            });
+        }else if ("영단어 퀴즈퍼즐".equals(stretchingOptionSaved)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btnStopAlarm.setText("영단어 퀴즈퍼즐 미션 시작하기");
+                }
+            });
+        }else if ("영문장 발음하기".equals(stretchingOptionSaved)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btnStopAlarm.setText("영문장 발음하기 미션 시작하기");
+                }
+            });
+        }else if ("만보계".equals(stretchingOptionSaved)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btnStopAlarm.setText("만보계 미션 시작하기");
                 }
             });
         }
@@ -119,15 +167,47 @@ public class AlarmActivity extends AppCompatActivity {
                 // 액티비티 종료 시 음량을 원래대로 되돌림
                 //setMediaVolume(AudioManager.USE_DEFAULT_STREAM_TYPE);
 
-                if ("선택안함".equals(stretchingOptionSaved)) { //아무런 미션을 선태하지 않으면 일반 알람처럼 꺼짐
+                if ("default".equals(stretchingOptionSaved)) { //아무런 미션을 선태하지 않으면 일반 알람처럼 꺼짐
                     finish();
-                } else {
+                } else if("스쿼트".equals(stretchingOptionSaved) || "푸쉬업".equals(stretchingOptionSaved)){
                     Intent mlkitMotionIntent = new Intent(AlarmActivity.this, MLkitMotion.class);
 
                     // 알람 ID를 인텐트에 추가
                     mlkitMotionIntent.putExtra("alarm_id", alarmId);
 
                     startActivity(mlkitMotionIntent);
+                    finish();
+                }else if("영단어 발음하기".equals(stretchingOptionSaved)){
+                    Intent AlarmSpeachWordsIntent = new Intent(AlarmActivity.this, AlarmSpeachWords.class);
+
+                    // 알람 ID를 인텐트에 추가
+                    AlarmSpeachWordsIntent.putExtra("alarm_id", alarmId);
+
+                    startActivity(AlarmSpeachWordsIntent);
+                    finish();
+                }else if("영문장 발음하기".equals(stretchingOptionSaved)){
+                    Intent AlarmSpeachSentencesIntent = new Intent(AlarmActivity.this, AlarmSpeachSentences.class);
+
+                    // 알람 ID를 인텐트에 추가
+                    AlarmSpeachSentencesIntent.putExtra("alarm_id", alarmId);
+
+                    startActivity(AlarmSpeachSentencesIntent);
+                    finish();
+                }else if("영단어 퀴즈퍼즐".equals(stretchingOptionSaved)){
+                    Intent AlarmQuizIntent = new Intent(AlarmActivity.this, AlarmQuiz.class);
+
+                    // 알람 ID를 인텐트에 추가
+                    AlarmQuizIntent.putExtra("alarm_id", alarmId);
+
+                    startActivity(AlarmQuizIntent);
+                    finish();
+                }else if("만보계".equals(stretchingOptionSaved)){
+                    Intent AlarmQuizIntent = new Intent(AlarmActivity.this, AlarmPedometerActivity.class);
+
+                    // 알람 ID를 인텐트에 추가
+                    AlarmQuizIntent.putExtra("alarm_id", alarmId);
+
+                    startActivity(AlarmQuizIntent);
                     finish();
                 }
             }

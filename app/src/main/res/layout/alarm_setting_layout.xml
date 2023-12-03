@@ -21,7 +21,7 @@
     <LinearLayout
         android:id="@+id/stretching_layout"
         android:layout_width="match_parent"
-        android:layout_height="210dp"
+        android:layout_height="300dp"
         android:orientation="vertical"
         android:background="@color/black"
         android:layout_marginTop="20dp"
@@ -39,39 +39,41 @@
             android:paddingLeft="10dp"
             android:textColor="@color/white"/>
 
-        <Spinner
-            android:paddingLeft="10dp"
-            android:id="@+id/stretching_option_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:prompt="@string/select_stretching_option"
-            android:theme="@style/MyTimePickerDivider"
-
+        <Button
+            android:id="@+id/btmissionselect"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:text="미션 설정하기"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            android:background="@drawable/rounded_button_mint"
+            android:layout_gravity="center"
             />
 
         <TextView
             android:id="@+id/currunt_count"
-            android:paddingLeft="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="미션 갯수 입력"
-            android:textColor="@color/white"
+            android:layout_height="83dp"
             android:layout_marginTop="30dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:paddingLeft="10dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:text="선택 미션: 선택 안함"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
             tools:ignore="InvalidId" />
-
-        <EditText
-            android:paddingLeft="10dp"
-            android:id="@+id/st_count_init"
-            android:layout_width="match_parent"
+        <CheckBox
+            android:id="@+id/cbpowermode"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="초기 갯수를 입력하세요"
-            android:inputType="number"
-            android:text="5"
-            android:theme="@style/MyTimePickerDivider"/>
+            android:text="강력모드: 알람 꺼짐 방지및 패널티 부여"
+            android:textStyle="bold"
+            android:textColor="#FF0000"
+            android:textSize="20dp"
+            android:buttonTint="@color/your_checked_color"
+            />
+
     </LinearLayout>
 
     <Button

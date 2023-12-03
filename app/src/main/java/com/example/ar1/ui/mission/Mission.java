@@ -117,7 +117,7 @@ public class Mission extends Fragment {
         }
     }
     private void initializeCategoryMissions() {
-        categoryMissions.put("헬스", Arrays.asList("스쿼트", "푸쉬업","턱걸이(준비중)",  "만보계(준비중)"));
+        categoryMissions.put("헬스", Arrays.asList("스쿼트", "푸쉬업","턱걸이(준비중)",  "만보계"));
         categoryMissions.put("교육", Arrays.asList("영단어 발음하기", "영문장 발음하기", "영단어 퀴즈퍼즐"));
         categoryMissions.put("게임", Arrays.asList("두더지게임(준비중)", "파리잡기(준비중)"));
     }

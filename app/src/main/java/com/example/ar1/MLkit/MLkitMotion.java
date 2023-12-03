@@ -125,6 +125,7 @@ public class MLkitMotion extends AppCompatActivity{
     private MediaPlayer motionStartMediaPlayer;
     private MediaPlayer motionEndMediaPlayer;
     private Alarm alarm;
+    boolean isPowerModeEnabled;
     private Handler stCountCheckHandler = new Handler();
     // 스트레칭 카운트가 증가하는 것을 감시하는 Runnable을 생성 스트레칭 카운트가 1분동안 증가하지 않으면 스트레칭 횟수를 추가해서 다 시 알람을 울림
     Runnable stCountCheckRunnable = new Runnable() {
@@ -235,8 +236,14 @@ public class MLkitMotion extends AppCompatActivity{
                 startActivity(intent);
             }
         };
+        isPowerModeEnabled = sharedPreferences.getBoolean("PowerMode", false);
+        Log.d(TAG, "파워모드: "+isPowerModeEnabled);
 
-        handler.postDelayed(runnable, Reapit_Alarm_Count); // mlkitmotion에서 스트레칭 시작 버튼을 1분동안 안누르면 알람액티비티 호출
+        if (isPowerModeEnabled) {
+            // 강력모드 활성화 시, 알람을 끄지 못하게 하는 로직 구현
+            handler.postDelayed(runnable, Reapit_Alarm_Count); // mlkitmotion에서 스트레칭 시작 버튼을 1분동안 안누르면 알람액티비티 호출
+        }
+        //handler.postDelayed(runnable, Reapit_Alarm_Count); // mlkitmotion에서 스트레칭 시작 버튼을 1분동안 안누르면 알람액티비티 호출
 
         CountDownTimer autoStartTimer = new CountDownTimer(Reapit_Alarm_Count, COUNTDOWN_INTERVAL) {
             public void onTick(long millisUntilFinished) {
@@ -740,9 +747,15 @@ public class MLkitMotion extends AppCompatActivity{
     }
 
     @Override
-    public void onBackPressed() { //뒤로가기 버튼 기능 오버라이드 하여 모션인식 중에 뒤로가기키 비활성화
-        Toast.makeText(this, "뒤로 가기 버튼이 비활성화되었습니다.", Toast.LENGTH_SHORT).show();
+    public void onBackPressed() {
+        if (!isPowerModeEnabled) {
+            super.onBackPressed(); // 파워 모드가 비활성화되어 있으면 기본 뒤로 가기 기능 수행
+        } else {
+            // 파워 모드가 활성화되어 있으면 토스트 메시지 표시
+            Toast.makeText(this, "뒤로 가기 버튼이 비활성화되었습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     @Override
     protected void onPause() {
@@ -760,7 +773,10 @@ public class MLkitMotion extends AppCompatActivity{
 
         Intent intent = getIntent();
         finish();
-        startActivity(intent);
+        if (isPowerModeEnabled) {
+            startActivity(intent);
+        }
+
     }
 
     @Override

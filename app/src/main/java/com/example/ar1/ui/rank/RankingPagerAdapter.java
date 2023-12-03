@@ -13,6 +13,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class RankingPagerAdapter extends FragmentStateAdapter {
 
+    private static final int REAL_COUNT = 6;  // 실제 페이지 수
+
     public RankingPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
     }
@@ -20,13 +22,20 @@ public class RankingPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
+        int realPosition = position % REAL_COUNT;  // 실제 페이지 위치 계산
+        switch (realPosition) {
             case 0:
-                return new Ranking();  // 새 인스턴스 생성
+                return new Ranking();
             case 1:
-                return new SquatRanking();  // 새 인스턴스 생성
+                return new SquatRanking();
             case 2:
                 return new PushupRanking();
+            case 3:
+                return new SpeachWordsRanking();
+            case 4:
+                return new SpeachSentencesRanking();
+            case 5:
+                return new QuizRanking();
             default:
                 throw new IllegalArgumentException("Invalid position");
         }
@@ -34,6 +43,6 @@ public class RankingPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return REAL_COUNT * 2; // 실제 페이지 수의 두 배
     }
 }

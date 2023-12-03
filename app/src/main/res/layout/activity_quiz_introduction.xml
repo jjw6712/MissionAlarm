@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/black">
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="영단어 퀴즈퍼즐"
+        android:gravity="center"
+        android:textSize="35dp"
+        android:textColor="@color/white"/>
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/squatDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/videoView"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:text="1. 올바른 영어 - 한글 또는 한글 - 영어 순으로 쌍을 지어줍니다.
+        \n2. 올바른 쌍이 선택되면 해당쌍은 파란색 블록으로 고정됩니다.
+        \n3. 서로 다른 쌍이 선택되면 일시적으로 빨간색 블록으로 변합니다.
+        \n4. 오답이라면 다시 올바른 블록을 이어줍니다.
+        \n5. 5개의 문제를 통과하면 오늘의 단어장으로 복습해 보세요"
+        android:lineSpacingExtra="8dp"/>
+
+    <Button
+        android:id="@+id/startSquatMissionButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@id/squatDescriptionTextView"
+        android:layout_marginTop="20dp"
+        android:text="영단어 쿼즈퍼즐 미션 시작하기"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:backgroundTint="#FF00DD9B"/>
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.ar1.edu;
+package com.example.ar1.alarmmission;
 
 import static android.content.ContentValues.TAG;
 
@@ -36,7 +36,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,8 +45,6 @@ import com.example.ar1.R;
 import com.example.ar1.ui.alarm.AlarmDBHelper;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -60,8 +57,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -71,7 +66,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class SpeachWords extends AppCompatActivity {
+public class AlarmSpeachSentences extends AppCompatActivity {
     private boolean isSttListening = false;
     private boolean isTtsSpeaking = false;
     final int PERMISSION = 1;
@@ -81,6 +76,8 @@ public class SpeachWords extends AppCompatActivity {
     LinearLayout layoutEnglishWords, layoutKoreanWords;
     ImageButton btMic;
     @Nullable
+    private Button lastSelectedButton = null;
+    private boolean isCheckingAnswer = false;
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private RelativeLayout loadingLayout;
     private TextToSpeech textToSpeech;
@@ -89,11 +86,14 @@ public class SpeachWords extends AppCompatActivity {
     private List<String> englishWords, koreanWords;
     private int currentWordIndex = 0;
     private LinearLayout layoutCorrectAnswers;
-    private static final int VOICE_RECOGNITION_REQUEST_CODE = 100; // 음성 인식 요청 코드 정의
+
     // 클래스 레벨 변수로 사용자가 선택한 난이도를 저장
     private String currentLevel = "";
     ImageButton btnSpeak;
-    private static final String MY_SECRET_KEY = "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";
+    private int alarmId;
+
+    String selectedLevel;
+    boolean isPowerModeEnabled;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -108,7 +108,6 @@ public class SpeachWords extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET,
                     Manifest.permission.RECORD_AUDIO},PERMISSION);
         }
-
         englishWords = new ArrayList<>();
         koreanWords = new ArrayList<>();
         client = new OkHttpClient.Builder()
@@ -127,11 +126,6 @@ public class SpeachWords extends AppCompatActivity {
         btMic = findViewById(R.id.btnMic);
         btnSpeak = findViewById(R.id.btnSpeak);
         // TextToSpeech 초기화
-        textToSpeech = new TextToSpeech(this, status -> {
-            if (status != TextToSpeech.ERROR) {
-                textToSpeech.setLanguage(Locale.ENGLISH);
-            }
-        });
         textToSpeech = new TextToSpeech(this, status -> {
             if (status != TextToSpeech.ERROR) {
                 textToSpeech.setLanguage(Locale.ENGLISH);
@@ -156,6 +150,7 @@ public class SpeachWords extends AppCompatActivity {
                 updateTtsButtonImage(); // TTS 버튼 이미지 업데이트
             }
         });
+
         intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"en-US");
@@ -164,7 +159,7 @@ public class SpeachWords extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!isTtsSpeaking) {
-                    mRecognizer = SpeechRecognizer.createSpeechRecognizer(SpeachWords.this);
+                    mRecognizer = SpeechRecognizer.createSpeechRecognizer(AlarmSpeachSentences.this);
                     mRecognizer.setRecognitionListener(listener);
                     mRecognizer.startListening(intent);
                     mRecognizer.startListening(intent);
@@ -181,30 +176,31 @@ public class SpeachWords extends AppCompatActivity {
                     }, 2000);
 
                 } else {
-                    Toast.makeText(SpeachWords.this, "듣기가 끝난 후에 시도하세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AlarmSpeachSentences.this, "듣기가 끝난 후에 시도하세요.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         // 선택한 레벨을 받아옴
-        Intent getintent = getIntent();
-        if (getintent != null) {
-            String selectedLevel = getintent.getStringExtra("selected_level");
+        SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
+        alarmId = getIntent().getIntExtra("alarm_id", -1); // 알람 ID 받아오기
+        selectedLevel = sharedPreferences.getString("selected_stretching_count_" + alarmId, "default");
+        isPowerModeEnabled = sharedPreferences.getBoolean("PowerMode", false);
             // 선택한 레벨에 따라 원하는 동작 수행
             if (selectedLevel != null) {
                 switch (selectedLevel) {
                     case "elementary":
                         // 초급 레벨에 대한 처리
                         fetchQuizWords("elementary");
-                        tvlevel.setText("난이도: 초급");
+                        tvlevel.setText("초급");
                         break;
                     case "middle":
                         // 중급 레벨에 대한 처리
                         fetchQuizWords("middle");
-                        tvlevel.setText("난이도: 중급");
+                        tvlevel.setText("중급");
                         break;
                     case "college":
                         fetchQuizWords("college");
-                        tvlevel.setText("난이도: 고급");
+                        tvlevel.setText("고급");
                         break;
                     default:
                         // 예외 처리
@@ -212,14 +208,13 @@ public class SpeachWords extends AppCompatActivity {
                 }
             }
         }
-    }
+
     private void stopSttSession() {
         if (mRecognizer != null) {
             mRecognizer.stopListening();
             isSttListening = false;
         }
     }
-
 
     void fetchQuizWords(String level) {
         currentLevel = level; // 사용자가 선택한 난이도 저장
@@ -231,7 +226,7 @@ public class SpeachWords extends AppCompatActivity {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("https://sw--zqbli.run.goorm.site/getWordstospeachwords/" + level) // 서버의 엔드포인트 URL
+                .url("https://sw--zqbli.run.goorm.site/getWordstospeachSentences/" + level) // 서버의 엔드포인트 URL
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -263,7 +258,7 @@ public class SpeachWords extends AppCompatActivity {
         @Override
         public void onReadyForSpeech(Bundle params) {
             isSttListening = true;
-            Toast.makeText(getApplicationContext(),"영어 단어의 발음을 정확하게 말하세요.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"영어 문장의 발음을 정확하게 말하세요.",Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -276,8 +271,7 @@ public class SpeachWords extends AppCompatActivity {
         public void onBufferReceived(byte[] buffer) {}
 
         @Override
-        public void onEndOfSpeech() {isSttListening = false;updateSttButtonImage(); // STT 버튼 이미지 업데이트
-        }
+        public void onEndOfSpeech() {isSttListening = false;updateSttButtonImage();}
 
         @Override
         public void onError(int error) {
@@ -309,7 +303,7 @@ public class SpeachWords extends AppCompatActivity {
                     message = "말하는 시간초과";
                     break;
                 default:
-                    message = "영어 단어의 발음을 정확하게 말하세요.";
+                    message = "영어 문장의 발음을 정확하게 말하세요.";
                     break;
             }
 
@@ -412,7 +406,7 @@ public class SpeachWords extends AppCompatActivity {
         builder.setTitle("발음하기 완료");
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_setnteces_list, null);
+        View dialogView = inflater.inflate(R.layout.dialog_words_list, null);
         builder.setView(dialogView);
 
         TextView tvWordsList = dialogView.findViewById(R.id.tvWordsList);
@@ -423,7 +417,6 @@ public class SpeachWords extends AppCompatActivity {
         tvWordsList.setText(wordsListBuilder.toString());
         Intent getintent = getIntent();
         if (getintent != null) {
-            String selectedLevel = getintent.getStringExtra("selected_level");
 
             // 선택한 레벨에 따라 원하는 동작 수행
             if (selectedLevel != null) {
@@ -449,6 +442,7 @@ public class SpeachWords extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // 확인 버튼 클릭시 처리
+
                 finish(); // 혹은 다른 활동으로 이동
             }
         });
@@ -469,18 +463,15 @@ public class SpeachWords extends AppCompatActivity {
         // AlarmDBHelper 인스턴스 생성
         AlarmDBHelper dbHelper = new AlarmDBHelper(this); //sqlite 로컬db 객체 초기화
 
-        // alarmId를 항상 null로 설정
-        String alarmId = "기본모드";
-
 // 현재 날짜와 시간을 구합니다.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         String currentDateAndTime = sdf.format(new Date());
 
         HashMap<String, String> data = new HashMap<>(); // 해쉬맵으로 데이터를 구성하기 위한 해쉬맵 객체 초기화
         data.put("userId", userId); // 로그인한 사용자 ID 삽입
-        data.put("alarmId", alarmId); // 항상 null로 설정
+        data.put("alarmId", String.valueOf(alarmId)); // 항상 null로 설정
         data.put("alarmTime", currentDateAndTime); // 현재 날짜와 시간 삽입
-        data.put("missionName", "영단어 발음하기"); // 해당 알람 미션 종류 삽입
+        data.put("missionName", "영문장 발음하기"); // 해당 알람 미션 종류 삽입
         data.put("missionCount", score); // 해당 알람 미션 완료 갯수 삽입
         data.put("wordsList", wordsList);
         Log.d(TAG, ("userId: " + userId + "\nalarmId: " + alarmId + "\nalarmTime: " + currentDateAndTime + "\nmissionMode: " + "영단어 발음하기" + "\nmissionCount: " + score+ "\nwordList"+wordsList));
@@ -509,37 +500,94 @@ public class SpeachWords extends AppCompatActivity {
 
     private Map<String, String> translationMap = new HashMap<>();
 
-    private void processQuizResponse(String response) {
-        loadingLayout.setVisibility(View.GONE);
 
+    private void processQuizResponse(String response) {
+        loadingLayout.setVisibility(View.GONE); // 로딩 화면 숨김
         englishWords.clear();
         koreanWords.clear();
-
-        // 쉼표로 분리하기 전에 배열 표시를 제거합니다.
+        // 배열 표기 제거 및 쉼표로 분리
         response = response.replaceAll("^\\[|\\]$", "");
-
         String[] wordPairs = response.split("\",\"");
+
         for (String wordPair : wordPairs) {
+            String englishWord = "", koreanWord = "";
             // 따옴표 제거
             wordPair = wordPair.trim().replaceAll("^\"|\"$", "");
+            // 물음표를 마침표로 바꾸기
+            wordPair = wordPair.replace("?", ".");
 
-            // 정규 표현식 수정: "영어 - 한글", "영어 (한글)", "영어: 한글" 형식을 모두 처리
-            Matcher matcher = Pattern.compile("^(\\d+\\.)?\\s*([A-Za-z\\s]+)(?:\\s*-|\\s*\\(|\\s*:)\\s*([가-힣]+)").matcher(wordPair);
-            if (matcher.find()) {
-                String englishWord = matcher.group(2).trim();
-                String koreanWord = matcher.group(3).trim();
+            // "영어문장. 한글문장" 형식 처리
+            if (englishWord.isEmpty() && koreanWord.isEmpty()) {
+                String[] parts = wordPair.split("\\.\\s+");
+                if (parts.length == 2) {
+                    englishWord = parts[0].trim();
+                    koreanWord = parts[1].trim();
+                }
+            }
+            // 숫자와 점 제거
+            String cleanedLine = wordPair.replaceFirst("^\\d+\\.\\s*", "");
 
+
+            // 레이블 형식 처리
+            if (cleanedLine.contains("English:") && cleanedLine.contains("Korean:")) {
+                String[] parts = cleanedLine.split("Korean:");
+                englishWord = parts[0].replace("English:", "").trim();
+                koreanWord = parts[1].trim();
+            }
+            // 괄호 형식 처리
+            else if (cleanedLine.contains("(")) {
+                String[] parts = cleanedLine.split("\\(");
+                englishWord = parts[0].trim();
+                koreanWord = parts[1].replace(")", "").trim();
+            }
+            // 하이픈 형식 처리
+            else if (cleanedLine.contains(" - ")) {
+                String[] parts = cleanedLine.split(" - ");
+                englishWord = parts[0].trim();
+                koreanWord = parts[1].trim();
+            }
+            // 기본 형식 처리: "영어. 한글"
+            else {
+                String[] parts = cleanedLine.split("\\.\\s+");
+                if (parts.length == 2) {
+                    englishWord = parts[0].trim();
+                    koreanWord = parts[1].trim();
+                }
+            }
+
+            // 문장 끝의 마침표 제거
+            englishWord = englishWord.replaceAll("\\.$", "");
+            koreanWord = koreanWord.replaceAll("\\.$", "");
+
+            if (!englishWord.isEmpty() && !koreanWord.isEmpty()) {
                 englishWords.add(englishWord);
                 koreanWords.add(koreanWord);
                 translationMap.put(englishWord, koreanWord);
             }
         }
 
-        if (!englishWords.isEmpty() && !koreanWords.isEmpty()) {
-            currentWordIndex = 0;
-            displayWordPair(englishWords.get(currentWordIndex), koreanWords.get(currentWordIndex));
+        if (englishWords.size() >= 5 && koreanWords.size() >= 5) {
+            // 첫 번째 단어가 한글인 경우 순서 변경
+            if (Character.isLetter(koreanWords.get(0).charAt(0)) && Character.UnicodeBlock.of(koreanWords.get(0).charAt(0)).equals(Character.UnicodeBlock.HANGUL_SYLLABLES)) {
+                for (int i = 0; i < englishWords.size(); i++) {
+                    String word = englishWords.get(i);
+                    word = word.replace("-", "").replace(",", "").replace("?", ""); // 기호 제거
+                    englishWords.set(i, word);
+                }
+                displayWordPair(englishWords.get(0), koreanWords.get(0));
+            } else {
+                List<String> temp = koreanWords;
+                koreanWords = englishWords;
+                englishWords = temp;
+                for (int i = 0; i < englishWords.size(); i++) {
+                    String word = englishWords.get(i);
+                    word = word.replace("-", "").replace(",", ""); // 기호 제거
+                    englishWords.set(i, word);
+                }
+                displayWordPair(englishWords.get(0), koreanWords.get(0));
+            }
         } else {
-            // 오류 처리
+            //fetchQuizWords(currentLevel); // 유효한 단어 쌍이 충분하지 않으면 다시 호출
         }
     }
 
@@ -560,7 +608,6 @@ public class SpeachWords extends AppCompatActivity {
                 // TTS 기능 실행
                 if (textToSpeech != null) {
                     isTtsSpeaking = true; // TTS가 시작되면 상태 변경
-                    updateTtsButtonImage(); // TTS 버튼 이미지 업데이트
                     textToSpeech.speak(englishWord, TextToSpeech.QUEUE_FLUSH, null, "utteranceId");
                 }
             }
@@ -591,6 +638,7 @@ public class SpeachWords extends AppCompatActivity {
         tvWordPair.startAnimation(slideOutLeft);
     }
 
+
     @Override
     protected void onDestroy() {
         if (textToSpeech != null) {
@@ -615,5 +663,24 @@ public class SpeachWords extends AppCompatActivity {
         } else {
             btnSpeak.setImageResource(R.drawable.ic_speaker_off); // 비활성화 이미지로 변경
         }
+    }
+    @Override
+    public void onBackPressed() {
+        if (!isPowerModeEnabled) {
+            super.onBackPressed(); // 파워 모드가 비활성화되어 있으면 기본 뒤로 가기 기능 수행
+        } else {
+            // 파워 모드가 활성화되어 있으면 토스트 메시지 표시
+            Toast.makeText(this, "뒤로 가기 버튼이 비활성화되었습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (isPowerModeEnabled) {
+            startActivity(intent);
+        }
+
     }
 }

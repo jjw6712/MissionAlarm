@@ -94,7 +94,26 @@ public class Alarm extends Fragment {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(android.R.color.black));
         }
-
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.
+                permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 0);
+        }
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.SET_ALARM) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.SET_ALARM}, 0);
+        }
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.
+                permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, 0);
+        }
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.
+                permission.FOREGROUND_SERVICE) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.FOREGROUND_SERVICE}, 0);
+        }
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.
+                permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+        }
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {

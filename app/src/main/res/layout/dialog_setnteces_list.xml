@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:text="오늘의 단어"
+        android:text="오늘의 문장"
         android:textColor="@color/black"
         />
 

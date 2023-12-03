@@ -24,6 +24,7 @@ import com.example.ar1.R;
 import com.example.ar1.edu.Quiz;
 import com.example.ar1.edu.SpeachSentences;
 import com.example.ar1.edu.SpeachWords;
+import com.example.ar1.pedometer.MainActivity;
 import com.example.ar1.ui.graph.PushUpInfo;
 import com.example.ar1.ui.graph.SquatInfo;
 
@@ -69,7 +70,10 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                 Intent intent = new Intent(context, SpeachSentencesIntroductionActivity.class);
                 context.startActivity(intent);
             }else if("영단어 퀴즈퍼즐".equals(currentItem)){
-                Intent intent = new Intent(context, Quiz.class);
+                Intent intent = new Intent(context, QuizIntroductionActivity.class);
+                context.startActivity(intent);
+            }else if("만보계".equals(currentItem)){
+                Intent intent = new Intent(context, MainActivity.class);
                 context.startActivity(intent);
             }
         });

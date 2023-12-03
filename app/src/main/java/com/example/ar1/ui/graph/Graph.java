@@ -295,6 +295,7 @@ public class Graph extends Fragment {
                         final int pushUpCount = jsonObject.getInt("pushUpCount");
                         final int speachWordsCount = jsonObject.getInt("speachWordsCount");
                         final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
+                        final int quizCount = jsonObject.getInt("quizCount");
                         Log.d(TAG, "스쿼트: "+squatCount);
                         Log.d(TAG, "푸쉬업: "+pushUpCount);
                         Log.d(TAG, "영단어: "+speachWordsCount);
@@ -309,6 +310,7 @@ public class Graph extends Fragment {
                                         adapter.updatePushUpCount(pushUpCount);
                                         adapter.updateSpeachWordsCount(speachWordsCount);
                                         adapter.updateSpeachSentencesCount(speachSentencesCount);
+                                        adapter.updateQuizCount(quizCount);
                                     }
                                 }
                             });
@@ -465,6 +467,7 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                         final int pushUpCount = jsonObject.getInt("pushUpCount");
                         final int speachWordsCount = jsonObject.getInt("speachWordsCount");
                         final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
+                        final int quizCount = jsonObject.getInt("quizCount");
                         Log.d(TAG, "어뎁터 스쿼트: "+squatCount);
                         Log.d(TAG, "어뎁터 푸쉬업: "+pushUpCount);
 
@@ -476,6 +479,7 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                                     adapter.updatePushUpCount(pushUpCount);
                                     adapter.updateSpeachWordsCount(speachWordsCount);
                                     adapter.updateSpeachSentencesCount(speachSentencesCount);
+                                    adapter.updateQuizCount(quizCount);
                                 }
                             }
                         });
