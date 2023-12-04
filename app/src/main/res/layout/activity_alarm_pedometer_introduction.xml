@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/black">
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="만보계"
+        android:gravity="center"
+        android:textSize="35dp"
+        android:textColor="@color/white"/>
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/squatDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/videoView"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:text="1. 목표 걸음수를 설정합니다.
+        \n2. 목표 걸음수 만큼 걸으면 만보계 미션을 종료합니다.
+        "
+        android:lineSpacingExtra="8dp"/>
+
+    <Button
+        android:id="@+id/startSquatMissionButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:text="만보계 미션 시작하기"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:backgroundTint="#FF00DD9B"/>
+
+</RelativeLayout>
