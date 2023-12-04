@@ -47,7 +47,7 @@ public class AlarmAdapter extends ArrayAdapter<String> {
         String alarm = mAlarms.get(position);
         alarmTextView.setText(alarm);
         // "알람 번호: " 부분을 "알람 시간: "으로 변경
-        String updatedAlarmText = alarm.replaceFirst("알람 번호: \\d{2}", "알람 시간:");
+        String updatedAlarmText = alarm.replaceFirst("알람 번호: \\d+", "알람 시간:");
         alarmTextView.setText(updatedAlarmText);
 
         // 텍스트를 중앙 정렬로 설정

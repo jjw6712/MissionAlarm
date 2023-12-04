@@ -117,7 +117,7 @@ public class SpeachWordsIntroductionActivity extends AppCompatActivity {
                 Intent intent = new Intent(SpeachWordsIntroductionActivity.this, SpeachWords.class);
                 intent.putExtra("selected_level", selectedLevel);
                 startActivity(intent);
-
+                finish();
                 dialog.dismiss();
             }
         });

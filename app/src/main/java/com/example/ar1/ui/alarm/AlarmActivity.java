@@ -39,7 +39,7 @@ import java.util.Locale;
 
 public class AlarmActivity extends AppCompatActivity {
 
-    private TextView tvAlarmTime, tvCurrentTime;
+    private TextView tvAlarmTime, alarm_text;
     private Button btnStopAlarm;
     private View view;
     private MediaPlayer mediaPlayer;
@@ -48,6 +48,7 @@ public class AlarmActivity extends AppCompatActivity {
     private boolean start_motion = false;
     private int alarmId;
     String stretchingOptionSaved;
+    String stretchingCount;
     private SharedPreferences sharedPreferences;
 
     @SuppressLint("RestrictedApi")
@@ -73,7 +74,7 @@ public class AlarmActivity extends AppCompatActivity {
         // 액티비티의 뷰와 변수를 매핑합니다.
         tvAlarmTime = findViewById(R.id.alarm_time_tv);
         btnStopAlarm = findViewById(R.id.stop_button);
-
+        alarm_text = findViewById(R.id.alarm_text);
         // 알람 시간과 현재 시간을 표시합니다.
         Calendar calendar = Calendar.getInstance();
         String time = timeFormat.format(calendar.getTime());
@@ -98,6 +99,7 @@ public class AlarmActivity extends AppCompatActivity {
         if (alarmId != -1) {
             stretchingOptionSaved = sharedPreferences.getString("selected_stretching_mode_" + alarmId, "default"); // 알람 ID 사용하여 스트레칭 모드 불러오기
             Log.d(TAG, "알람액티비티 알람아이디: " + alarmId + " 스트레칭 옵션 " + stretchingOptionSaved);
+            stretchingCount = sharedPreferences.getString("selected_stretching_count_" + alarmId, "default"); // 알람 ID 사용하여 스트레칭 횟수 불러오기
         } else {
             Log.e(TAG, "알람 아이디가 유효하지 않습니다.");
         }
@@ -105,6 +107,7 @@ public class AlarmActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    alarm_text.setText("일어나세요");
                     btnStopAlarm.setText("알람끄기");
                 }
             });
@@ -112,6 +115,7 @@ public class AlarmActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    alarm_text.setText("미션: "+stretchingOptionSaved + "\n\n"+"횟수: "+stretchingCount);
                     btnStopAlarm.setText("푸쉬업 미션 시작하기");
                 }
             });
@@ -119,6 +123,7 @@ public class AlarmActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    alarm_text.setText("미션: "+stretchingOptionSaved + "\n\n"+"횟수: "+stretchingCount);
                     btnStopAlarm.setText("스쿼트 미션 시작하기");
                 }
             });
@@ -126,6 +131,7 @@ public class AlarmActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    alarm_text.setText("미션: "+stretchingOptionSaved + "\n\n"+"난이도: "+stretchingCount);
                     btnStopAlarm.setText("영단어 발음하기 미션 시작하기");
                 }
             });
@@ -133,6 +139,7 @@ public class AlarmActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    alarm_text.setText("미션: "+stretchingOptionSaved + "\n\n"+"난이도: "+stretchingCount);
                     btnStopAlarm.setText("영단어 퀴즈퍼즐 미션 시작하기");
                 }
             });
@@ -140,6 +147,7 @@ public class AlarmActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    alarm_text.setText("미션: "+stretchingOptionSaved + "\n\n"+"난이도: "+stretchingCount);
                     btnStopAlarm.setText("영문장 발음하기 미션 시작하기");
                 }
             });
@@ -147,6 +155,7 @@ public class AlarmActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    alarm_text.setText("미션: "+stretchingOptionSaved + "\n\n"+"걸음수: "+stretchingCount);
                     btnStopAlarm.setText("만보계 미션 시작하기");
                 }
             });

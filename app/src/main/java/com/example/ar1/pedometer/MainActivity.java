@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private long totalActiveTime = 0;  // 활성화된 총 시간
     public double calories;
     public String activeTime;
+    long activeHours;
+    long activeMinutes;
+    long activeSeconds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         scheduleMidnightReset();
         // 앱 종료시 횟수 카운트
         startMyService(this);
+        //resetData();
 
         // permission line -------------------------------------------------------------------------
         if (ContextCompat.checkSelfPermission(this, Manifest.
@@ -171,9 +175,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             lastStepTime = currentTime;
 
             // 활성화된 시간을 시:분:초 형식으로 표시
-            long activeHours = totalActiveTime / 3600000;
-            long activeMinutes = (totalActiveTime % 3600000) / 60000;
-            long activeSeconds = (totalActiveTime % 60000) / 1000;
+            activeHours = totalActiveTime / 3600000;
+            activeMinutes = (totalActiveTime % 3600000) / 60000;
+            activeSeconds = (totalActiveTime % 60000) / 1000;
             activeTime = String.format("%02d:%02d:%02d", activeHours, activeMinutes, activeSeconds);
             time.setText(activeTime);
 
@@ -182,11 +186,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             calories = mstepCount * 0.05;
             cal.setText(String.format("%.2f", calories));
         }
-        SharedPreferences preferences = getSharedPreferences("user_preferences", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("pedometer_preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("steps", mstepCount);
+        editor.putInt("stepCount", stepCount);
         editor.putFloat("calories", (float) calories);
         editor.putString("activeTime", activeTime);
+        editor.putLong("totalActiveTime", totalActiveTime);
         editor.apply();
     }
 
@@ -197,50 +203,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-      public void sendDataToServer(int steps, double calories, String activeTime) {
-        OkHttpClient client = new OkHttpClient();
-        String url = "https://sw--zqbli.run.goorm.site/updatepedometer"; // 서버의 URL로 대체
 
-        SharedPreferences preferences = getSharedPreferences("user_preferences", MODE_PRIVATE);
-        String userId = preferences.getString("userId", ""); //로그인한 유저 id 가져오기
-        // 현재 날짜와 시간을 구합니다.
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        String currentDateAndTime = sdf.format(new Date());
-
-        JSONObject data = new JSONObject();
-        try {
-            data.put("userId", userId);
-            data.put("step", steps);
-            data.put("cal", calories);
-            data.put("time", activeTime);
-            data.put("alarmTime", currentDateAndTime);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RequestBody body = RequestBody.create(data.toString(), MediaType.get("application/json; charset=utf-8"));
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // 요청 실패 처리
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    // 요청 성공 처리
-                    final String responseData = response.body().string();
-                    // UI 업데이트는 여기서 수행
-                }
-            }
-        });
-    }
     @SuppressLint("RestrictedApi")
     private void scheduleHourlyUpdate() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -271,9 +234,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // MainActivity 내부에 resetData 메소드 추가
     public void resetData() {
         mstepCount = 0;
+        stepCount = 0;
         cal.setText("0.00");
         lastStepTime = 0;
         totalActiveTime = 0; // 총 활동 시간 변수 추가
+        activeHours = 0;
+        activeMinutes = 0;
+        activeSeconds = 0;
+        pedometer.saveActiveTime(this, 0);
+        pedometer.saveStepTime(this, 0);
+        pedometer.saveStepCount(this, 0);
+        SharedPreferences preferences = getSharedPreferences("pedometer_preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("steps", mstepCount);
+        editor.putInt("stepCount", stepCount);
+        editor.putFloat("calories", (float) calories);
+        //editor.putString("activeTime", activeTime);
+        editor.putLong("totalActiveTime", totalActiveTime);
+        editor.apply();
 
         countTV.setText(String.valueOf(mstepCount));
         //cal.setText(String.format("%.2f", totalCalories));

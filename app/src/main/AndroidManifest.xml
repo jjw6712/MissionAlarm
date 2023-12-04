@@ -61,7 +61,7 @@
             android:stopWithTask="false" />
 
 
-
+        <activity android:name=".ui.mission.PedometerIntroductionActivity"/>
         <activity android:name=".alarmmission.AlarmPedometerActivity"/>
         <activity android:name=".alarmmission.AlarmPedometerIntroductionActivity"/>
         <activity android:name=".pedometer.MainActivity"/>

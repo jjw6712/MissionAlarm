@@ -191,16 +191,16 @@ public class AlarmSpeachSentences extends AppCompatActivity {
                     case "elementary":
                         // 초급 레벨에 대한 처리
                         fetchQuizWords("elementary");
-                        tvlevel.setText("초급");
+                        tvlevel.setText("난이도: 초급");
                         break;
                     case "middle":
                         // 중급 레벨에 대한 처리
                         fetchQuizWords("middle");
-                        tvlevel.setText("중급");
+                        tvlevel.setText("난이도: 중급");
                         break;
                     case "college":
                         fetchQuizWords("college");
-                        tvlevel.setText("고급");
+                        tvlevel.setText("난이도: 고급");
                         break;
                     default:
                         // 예외 처리

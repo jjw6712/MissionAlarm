@@ -94,6 +94,7 @@ public class SquatIntroductionActivity extends AppCompatActivity {
         editorOption.apply();
         Intent intent = new Intent(this, MLkitMotionDemo.class);
         startActivity(intent);
+        finish();
     }
 
     InputFilter inputFilter = new InputFilter() {

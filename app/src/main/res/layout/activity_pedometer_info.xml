@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.graph.SquatInfo"
+    android:background="@color/black">
+
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="스쿼트"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="35dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvToday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TODAY"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"/>
+
+    <TextView
+        android:id="@+id/tvTodayCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvToday"
+        android:layout_centerHorizontal="true"
+        android:text="0"
+        android:textSize="30sp"
+        android:textColor="#FF00DD9B"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvWeek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WEEK"
+        android:textSize="30sp"
+        android:textColor="@color/white"
+        android:layout_below="@+id/tvTodayCount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/tvWeekCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvWeek"
+        android:layout_centerHorizontal="true"
+        android:text="0"
+        android:textSize="30sp"
+        android:textColor="#FF00DD9B"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MONTH"
+        android:textSize="30sp"
+        android:textColor="@color/white"
+        android:layout_below="@+id/tvWeekCount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/tvMonthCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvMonth"
+        android:layout_centerHorizontal="true"
+        android:text="0"
+        android:textSize="30sp"
+        android:textColor="#FF00DD9B"
+        android:textStyle="bold"/>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/BarChart"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:background="@android:color/black"
+        tools:ignore="MissingClass"
+        android:layout_below="@+id/tvMonthCount"/>
+
+</RelativeLayout>

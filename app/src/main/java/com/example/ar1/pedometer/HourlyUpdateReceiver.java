@@ -30,10 +30,10 @@ public class HourlyUpdateReceiver extends BroadcastReceiver {
     private String userId;
     String currentDateAndTime;
 
-    @SuppressLint("RestrictedApi")
+    @SuppressLint({"RestrictedApi", "SuspiciousIndentation"})
     @Override
     public void onReceive(Context context, Intent intent) {
-        SharedPreferences preferences = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences("pedometer_preferences", Context.MODE_PRIVATE);
         userId = preferences.getString("userId", ""); // 로그인한 유저 id 가져오기
 
         // 현재 날짜와 시간을 구합니다.

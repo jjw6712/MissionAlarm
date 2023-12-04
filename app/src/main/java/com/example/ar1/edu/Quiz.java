@@ -74,7 +74,7 @@ public class Quiz extends AppCompatActivity {
     private boolean isCheckingAnswer = false;
     private RelativeLayout loadingLayout;
     private TextToSpeech textToSpeech;
-    TextView tvSelectedWord;
+    TextView tvSelectedWord, tvlevel;
     List<String> englishWords = new ArrayList<>();
     List<String> koreanWords = new ArrayList<>();
     private LinearLayout layoutCorrectAnswers;
@@ -99,7 +99,7 @@ public class Quiz extends AppCompatActivity {
                 .writeTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .build();
-
+        tvlevel = findViewById(R.id.tvlevel);
         layoutEnglishWords = findViewById(R.id.layoutEnglishWords);
         layoutKoreanWords = findViewById(R.id.layoutKoreanWords);
         loadingLayout = findViewById(R.id.loadingLayout);
@@ -122,14 +122,17 @@ public class Quiz extends AppCompatActivity {
             if (selectedLevel != null) {
                 switch (selectedLevel) {
                     case "elementary":
+                        tvlevel.setText("난이도: 초급");
                         // 초급 레벨에 대한 처리
                         fetchQuizWords("elementary");
                         break;
                     case "middle":
+                        tvlevel.setText("난이도: 중급");
                         // 중급 레벨에 대한 처리
                         fetchQuizWords("middle");
                         break;
                     case "college":
+                        tvlevel.setText("난이도: 고급");
                         fetchQuizWords("college");
                         break;
                     default:

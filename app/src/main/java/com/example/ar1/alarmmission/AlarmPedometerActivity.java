@@ -1,5 +1,6 @@
 package com.example.ar1.alarmmission;
 
+import static androidx.fragment.app.FragmentManager.TAG;
 import static com.example.ar1.pedometer.MainActivity.startMyService;
 
 import android.Manifest;
@@ -12,6 +13,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -40,13 +42,16 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
     private TextView cal;
     private TextView targetcnt;
     private long lastStepTime = 0;  // 마지막 걸음이 감지된 시간
-    private long totalActiveTime ; // 활성화된 총 시간
+    private long totalActiveTime = 0; ; // 활성화된 총 시간
     public double calories;
     public String activeTime;
     private int alarmId;
     private boolean isDialogShown = false; // 다이얼로그 표시 여부를 추적하는 플래그
     boolean isPowerModeEnabled;
     boolean isQuizEnd;
+    long activeHours ;
+    long activeMinutes;
+    long activeSeconds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,7 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
         isQuizEnd = false;
         calories = 0;
         totalActiveTime = 0;
+        lastStepTime = 0;
         mstepCount = 0; // 걸음 수 초기화
         stepCount = 0;
         activeTime = "";
@@ -153,13 +159,17 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
             lastStepTime = currentTime;
 
             // 활성화된 시간을 시:분:초 형식으로 변환하여 표시
-            activeTime = formatTime(totalActiveTime);
-            time.setText(activeTime);
+            //activeTime = formatTime(totalActiveTime);
+            //time.setText(activeTime);
 
             // 활성화된 시간을 시:분:초 형식으로 표시
-            long activeHours = totalActiveTime / 3600000;
-            long activeMinutes = (totalActiveTime % 3600000) / 60000;
-            long activeSeconds = (totalActiveTime % 60000) / 1000;
+            activeHours = totalActiveTime / 3600000;
+            activeMinutes = (totalActiveTime % 3600000) / 60000;
+            activeSeconds = (totalActiveTime % 60000) / 1000;
+            SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putLong("totalActiveTime", totalActiveTime);
+            editor.apply();
             activeTime = String.format("%02d:%02d:%02d", activeHours, activeMinutes, activeSeconds);
             time.setText(activeTime);
             mstepCount = (int) event.values[0] - stepCount;
@@ -168,9 +178,11 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
             cal.setText(String.format("%.2f", calories));
             // mstepCount 값이 변경될 때마다 저장
             saveStepCount();
-            saveActiveTime(); // 보행 시간 저장
+
         }
         if (mstepCount >= mtargetCount && !isDialogShown) {
+            // 센서 리스너 제거
+            sensorManager.unregisterListener(this);
             // 목표 달성 시 다이얼로그 표시 및 플래그 설정
             showCompletionDialog();
             isDialogShown = true; // 다이얼로그가 표시되었음을 표시
@@ -179,13 +191,7 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
 
 
     }
-    // 밀리초를 시:분:초 형식으로 변환하는 메소드
-    private String formatTime(long millis) {
-        long hours = millis / 3600000;
-        long minutes = (millis % 3600000) / 60000;
-        long seconds = (millis % 60000) / 1000;
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-    }
+
     private void showCompletionDialog() {
         if (!isFinishing() && !isDialogShown) {
             SharedPreferences sharedPreferences = getSharedPreferences("MyApp", MODE_PRIVATE);
@@ -193,13 +199,18 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
             editor.remove("mstepCount"); // 키 삭제
             editor.remove("stepCount"); // 키 삭제
             editor.remove("totalActiveTime"); // 키 삭제
-            activeTime = "";
-            editor.apply();
+            totalActiveTime = 0;
+            editor.putLong("totalActiveTime", totalActiveTime);
+            Log.d(TAG, "토탈: "+totalActiveTime);
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("목표 달성!")
-                    .setMessage("칼로리: " + String.format("%.2f", calories) + "\n활동 시간: " + activeTime)
+                    .setMessage("걸음:"+mstepCount+"\n칼로리: " + String.format("%.2f", calories) + "\n활동 시간: " + String.format("%02d시간%02d분%02d초", activeHours, activeMinutes, activeSeconds))
                     .setPositiveButton("확인", (dialog, which) -> finish());
-
+            activeHours = 0;
+            activeMinutes = 0;
+            activeSeconds = 0;
+            editor.apply();
             builder.create().show();
             isDialogShown = true;
             isQuizEnd = true;
@@ -266,6 +277,15 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
             Intent intent = getIntent();
             finish();
             startActivity(intent);
+        }else {
+            mstepCount = 0;
+            activeHours = 0;
+            activeMinutes = 0;
+            activeSeconds = 0;
+            editor.remove("mstepCount"); // 키 삭제
+            editor.remove("stepCount"); // 키 삭제
+            editor.remove("totalActiveTime"); // 키 삭제
+            editor.apply();
         }
     }
 

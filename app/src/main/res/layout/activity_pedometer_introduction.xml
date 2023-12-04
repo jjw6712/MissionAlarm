@@ -18,37 +18,36 @@
         android:gravity="center"
         android:textSize="35dp"
         android:textColor="@color/white"/>
-    <ImageView
-        android:id="@+id/squatGifImageView"
+    <VideoView
+        android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_below="@id/title"
         android:layout_marginTop="20dp"
-        android:src="@drawable/squat" />
+        />
 
     <TextView
         android:id="@+id/squatDescriptionTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/squatGifImageView"
+        android:layout_below="@id/videoView"
         android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:textColor="@color/white"
         android:textSize="16dp"
-        android:text="1. 카메라에 머리부터 발 끝 까지 화면에 비추세요
-        \n2. 뼈대가 인식되면 미션시작 버튼을 누르세요
-        \n3. 다리를 어깨너비보다 넓게 벌리고 서서 시작합니다.
-        \n4. 엉덩이를 내리면서 스쿼트 동작을 진행하고, 손은 가슴앞에서 모아줬다가 내립니다.
-        \n5. 시선은 정면을 향하고, 상체는 구부러지지 않도록 펴줍니다."
+        android:text="1. 만보계는 백그라운드에서도 걸음수를 저장합니다.
+        \n2. 매일 자정이 지나면 걸음수가 초기화 됩니다.
+        \n3. 칼로리와 보행시간, 걸음수는 기록 페이지에서 그래프로 확인 가능합니다.
+        "
         android:lineSpacingExtra="8dp"/>
 
     <Button
         android:id="@+id/startSquatMissionButton"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_below="@id/squatDescriptionTextView"
         android:layout_marginTop="20dp"
         android:text="만보계 미션 시작하기"
+        android:layout_alignParentBottom="true"
         android:textColor="@color/white"
         android:textSize="24dp"
         android:textStyle="bold"

@@ -193,18 +193,18 @@ public class SpeachWords extends AppCompatActivity {
             if (selectedLevel != null) {
                 switch (selectedLevel) {
                     case "elementary":
+                        tvlevel.setText("난이도: 초급");
                         // 초급 레벨에 대한 처리
                         fetchQuizWords("elementary");
-                        tvlevel.setText("난이도: 초급");
                         break;
                     case "middle":
+                        tvlevel.setText("난이도: 중급");
                         // 중급 레벨에 대한 처리
                         fetchQuizWords("middle");
-                        tvlevel.setText("난이도: 중급");
                         break;
                     case "college":
-                        fetchQuizWords("college");
                         tvlevel.setText("난이도: 고급");
+                        fetchQuizWords("college");
                         break;
                     default:
                         // 예외 처리

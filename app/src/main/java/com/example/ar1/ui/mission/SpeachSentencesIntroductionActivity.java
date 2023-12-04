@@ -107,7 +107,7 @@ public class SpeachSentencesIntroductionActivity extends AppCompatActivity {
                 Intent intent = new Intent(SpeachSentencesIntroductionActivity.this, SpeachSentences.class);
                 intent.putExtra("selected_level", selectedLevel);
                 startActivity(intent);
-
+                finish();
                 dialog.dismiss();
             }
         });

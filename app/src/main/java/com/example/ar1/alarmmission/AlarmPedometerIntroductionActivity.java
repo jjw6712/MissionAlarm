@@ -2,6 +2,8 @@ package com.example.ar1.alarmmission;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -12,12 +14,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.example.ar1.R;
 
 public class AlarmPedometerIntroductionActivity extends AppCompatActivity {
@@ -26,14 +27,36 @@ public class AlarmPedometerIntroductionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pedometer_introduction);
+        setContentView(R.layout.activity_alarm_pedometer_introduction);
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
-        ImageView imageView = findViewById(R.id.squatGifImageView);
-        Glide.with(this).load(R.drawable.squat).into(imageView);
         btBack = findViewById(R.id.btBack);
+        VideoView videoView = findViewById(R.id.videoView);
+        String videoFileName = "pedometer"; // 동영상 파일 이름
+
+        int videoResId = getResources().getIdentifier(videoFileName, "raw", getPackageName());
+        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + videoResId));
         Button startSquatMissionButton = findViewById(R.id.startSquatMissionButton);
+        // 동영상 재생이 완료될 때 호출되는 리스너 설정
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                // 동영상 재생이 완료되면 다시 시작
+                videoView.start();
+            }
+        });
+
+// 동영상 재생 시작
+        videoView.start();
+        btBack = findViewById(R.id.btBack);
+        startSquatMissionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 미션 시작 다이얼로그 표시
+                showStartMissionDialog();
+            }
+        });
         startSquatMissionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
