@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.ar1.Alarm;
 import com.example.ar1.R;
 import com.example.ar1.pedometer.AlarmMyService;
 import com.example.ar1.pedometer.Alarmpedometer;
@@ -282,6 +283,9 @@ public class AlarmPedometerActivity extends AppCompatActivity implements SensorE
             activeHours = 0;
             activeMinutes = 0;
             activeSeconds = 0;
+            Alarmpedometer.saveStepTime(this, 0);
+            Alarmpedometer.saveActiveTime(this, 0);
+            Alarmpedometer.saveStepCount(this, 0);
             editor.remove("mstepCount"); // 키 삭제
             editor.remove("stepCount"); // 키 삭제
             editor.remove("totalActiveTime"); // 키 삭제

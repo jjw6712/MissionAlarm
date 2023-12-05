@@ -296,10 +296,12 @@ public class Graph extends Fragment {
                         final int speachWordsCount = jsonObject.getInt("speachWordsCount");
                         final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
                         final int quizCount = jsonObject.getInt("quizCount");
+                        final int pedometerCount = jsonObject.getInt("pedometerCount");
                         Log.d(TAG, "스쿼트: "+squatCount);
                         Log.d(TAG, "푸쉬업: "+pushUpCount);
                         Log.d(TAG, "영단어: "+speachWordsCount);
                         Log.d(TAG, "영문장: "+speachSentencesCount);
+                        Log.d(TAG, "만보계: "+pedometerCount);
                         //Log.d(TAG, "영단어: "+speachWordsCount);
                         if (getActivity() != null) {  // getActivity() null 체크 추가
                             getActivity().runOnUiThread(new Runnable() {
@@ -311,6 +313,7 @@ public class Graph extends Fragment {
                                         adapter.updateSpeachWordsCount(speachWordsCount);
                                         adapter.updateSpeachSentencesCount(speachSentencesCount);
                                         adapter.updateQuizCount(quizCount);
+                                        adapter.updatePedometerCount(pedometerCount);
                                     }
                                 }
                             });
@@ -468,6 +471,7 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                         final int speachWordsCount = jsonObject.getInt("speachWordsCount");
                         final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
                         final int quizCount = jsonObject.getInt("quizCount");
+                        final int pedometerCount = jsonObject.getInt("pedometerCount");
                         Log.d(TAG, "어뎁터 스쿼트: "+squatCount);
                         Log.d(TAG, "어뎁터 푸쉬업: "+pushUpCount);
 
@@ -480,6 +484,7 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                                     adapter.updateSpeachWordsCount(speachWordsCount);
                                     adapter.updateSpeachSentencesCount(speachSentencesCount);
                                     adapter.updateQuizCount(quizCount);
+                                    adapter.updatePedometerCount(pedometerCount);
                                 }
                             }
                         });
