@@ -75,6 +75,9 @@ public class MissionListAdapter extends ArrayAdapter<String> {
             }else if("만보계".equals(currentItem)){
                 Intent intent = new Intent(context, PedometerIntroductionActivity.class);
                 context.startActivity(intent);
+            }else if("두더지게임".equals(currentItem)){
+                Intent intent = new Intent(context, MoleGameIntroductionActivity.class);
+                context.startActivity(intent);
             }
         });
 

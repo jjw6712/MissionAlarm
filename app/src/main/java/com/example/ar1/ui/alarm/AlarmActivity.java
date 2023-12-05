@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ar1.MLkit.MLkitMotion;
 import com.example.ar1.R;
+import com.example.ar1.alarmmission.AlarmGameProcess;
 import com.example.ar1.alarmmission.AlarmPedometerActivity;
 import com.example.ar1.alarmmission.AlarmQuiz;
 import com.example.ar1.alarmmission.AlarmSpeachSentences;
@@ -159,6 +160,14 @@ public class AlarmActivity extends AppCompatActivity {
                     btnStopAlarm.setText("만보계 미션 시작하기");
                 }
             });
+        }else if ("두더지게임".equals(stretchingOptionSaved)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    alarm_text.setText("미션: "+stretchingOptionSaved + "\n\n"+"난이도: "+stretchingCount);
+                    btnStopAlarm.setText("두더지게임 시작하기");
+                }
+            });
         }
 
         // 알람을 멈추는 버튼을 클릭하면 액티비티와 미디어 플레이어를 종료합니다.
@@ -212,6 +221,14 @@ public class AlarmActivity extends AppCompatActivity {
                     finish();
                 }else if("만보계".equals(stretchingOptionSaved)){
                     Intent AlarmQuizIntent = new Intent(AlarmActivity.this, AlarmPedometerActivity.class);
+
+                    // 알람 ID를 인텐트에 추가
+                    AlarmQuizIntent.putExtra("alarm_id", alarmId);
+
+                    startActivity(AlarmQuizIntent);
+                    finish();
+                }else if("두더지게임".equals(stretchingOptionSaved)){
+                    Intent AlarmQuizIntent = new Intent(AlarmActivity.this, AlarmGameProcess.class);
 
                     // 알람 ID를 인텐트에 추가
                     AlarmQuizIntent.putExtra("alarm_id", alarmId);

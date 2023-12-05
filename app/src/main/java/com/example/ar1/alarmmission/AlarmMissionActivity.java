@@ -32,6 +32,7 @@ public class AlarmMissionActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_Speachsentences = 4;
     private static final int REQUEST_CODE_Quiz = 5;
     private static final int REQUEST_CODE_Pedometer = 6;
+    private static final int REQUEST_CODE_Molegame = 7;
     String userId, userName;
     AlarmMissionListAdapter adapter;
     private LinearLayout categoryContainer;
@@ -101,7 +102,7 @@ public class AlarmMissionActivity extends AppCompatActivity {
     private void initializeCategoryMissions() {
         categoryMissions.put("헬스", Arrays.asList("스쿼트", "푸쉬업","턱걸이(준비중)",  "만보계"));
         categoryMissions.put("교육", Arrays.asList("영단어 발음하기", "영문장 발음하기", "영단어 퀴즈퍼즐"));
-        categoryMissions.put("게임", Arrays.asList("두더지게임(준비중)", "파리잡기(준비중)"));
+        categoryMissions.put("게임", Arrays.asList("두더지게임", "파리잡기(준비중)"));
     }
 
 
@@ -168,6 +169,16 @@ public class AlarmMissionActivity extends AppCompatActivity {
                     finish();
                     break;
                 case REQUEST_CODE_Pedometer:
+                    missionName = data.getStringExtra("missionName");
+                    missionCount = data.getStringExtra("missionCount");
+
+                    returnIntent = new Intent();
+                    returnIntent.putExtra("missionName", missionName);
+                    returnIntent.putExtra("missionCount", missionCount);
+                    setResult(RESULT_OK, returnIntent);
+                    finish();
+                    break;
+                case REQUEST_CODE_Molegame:
                     missionName = data.getStringExtra("missionName");
                     missionCount = data.getStringExtra("missionCount");
 

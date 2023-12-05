@@ -188,6 +188,8 @@ public class AlarmSettingActivity extends AppCompatActivity {
                 }
             } else if ("만보계".equals(missionName)) {
                 curruntcount.setText("선택 미션: " + missionName + " \n횟수: " + missionCount + "보");
+            }else if ("두더지게임".equals(missionName)) {
+                curruntcount.setText("선택 미션: " + missionName + " \n난이도: " + missionCount);
             }
         }
 

@@ -81,7 +81,7 @@ public class Graph extends Fragment {
         itemList.add("영단어 발음하기");
         itemList.add("영문장 발음하기");
         itemList.add("영단어 퀴즈퍼즐");
-        itemList.add("두더지게임(준비중)");
+        itemList.add("두더지게임");
         itemList.add("파리잡기(준비중)");
         itemList.add("");
 
@@ -297,6 +297,7 @@ public class Graph extends Fragment {
                         final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
                         final int quizCount = jsonObject.getInt("quizCount");
                         final int pedometerCount = jsonObject.getInt("pedometerCount");
+                        final int molegameCount = jsonObject.getInt("molegameCount");
                         Log.d(TAG, "스쿼트: "+squatCount);
                         Log.d(TAG, "푸쉬업: "+pushUpCount);
                         Log.d(TAG, "영단어: "+speachWordsCount);
@@ -314,6 +315,7 @@ public class Graph extends Fragment {
                                         adapter.updateSpeachSentencesCount(speachSentencesCount);
                                         adapter.updateQuizCount(quizCount);
                                         adapter.updatePedometerCount(pedometerCount);
+                                        adapter.updateMolegameCount(molegameCount);
                                     }
                                 }
                             });
@@ -472,6 +474,7 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                         final int speachSentencesCount = jsonObject.getInt("speachSentencesCount");
                         final int quizCount = jsonObject.getInt("quizCount");
                         final int pedometerCount = jsonObject.getInt("pedometerCount");
+                        final int molegameCount = jsonObject.getInt("molegameCount");
                         Log.d(TAG, "어뎁터 스쿼트: "+squatCount);
                         Log.d(TAG, "어뎁터 푸쉬업: "+pushUpCount);
 
@@ -485,6 +488,7 @@ class DateAdapter extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
                                     adapter.updateSpeachSentencesCount(speachSentencesCount);
                                     adapter.updateQuizCount(quizCount);
                                     adapter.updatePedometerCount(pedometerCount);
+                                    adapter.updateMolegameCount(molegameCount);
                                 }
                             }
                         });

@@ -13,7 +13,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class RankingPagerAdapter extends FragmentStateAdapter {
 
-    private static final int REAL_COUNT = 7;  // 실제 페이지 수
+    private static final int REAL_COUNT = 8;  // 실제 페이지 수
 
     public RankingPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
@@ -38,6 +38,8 @@ public class RankingPagerAdapter extends FragmentStateAdapter {
                 return new QuizRanking();
             case 6:
                 return new PedometerRanking();
+            case 7:
+                return new MolegameRanking();
             default:
                 throw new IllegalArgumentException("Invalid position");
         }

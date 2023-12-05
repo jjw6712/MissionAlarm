@@ -66,6 +66,14 @@
         <service android:name=".pedometer.MyService"
             android:stopWithTask="false" />
 
+    
+        <activity android:name=".ui.graph.MolegameInfo"/>
+        <activity android:name=".alarmmission.AlarmMoleGameIntroductionActivity"/>
+        <activity android:name=".alarmmission.AlarmGameProcess"/>
+        <activity android:name=".ui.mission.MoleGameIntroductionActivity"/>
+        <activity android:name=".game.molegame.GameProcess"/>
+        <activity android:name=".game.molegame.game_end"/>
+        <activity android:name=".game.molegame.game_selection"/>
         <activity android:name=".ui.graph.PedometerInfo"/>
         <activity android:name=".ui.mission.PedometerIntroductionActivity"/>
         <activity android:name=".alarmmission.AlarmPedometerActivity"/>

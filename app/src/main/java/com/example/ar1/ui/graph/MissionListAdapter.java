@@ -28,6 +28,7 @@ public class MissionListAdapter extends ArrayAdapter<String> {
     private  int speachSentencesCount = 0;
     private  int quizCount = 0;
     private  int pedometerCount = 0;
+    private  int molegameCount = 0;
 
     public MissionListAdapter(Context context, List<String> items) {
         super(context, 0, items);
@@ -56,7 +57,11 @@ public class MissionListAdapter extends ArrayAdapter<String> {
         notifyDataSetChanged();
     }
     public void updatePedometerCount(int newCount) {
-        this.quizCount = newCount;
+        this.pedometerCount = newCount;
+        notifyDataSetChanged();
+    }
+    public void updateMolegameCount(int newCount) {
+        this.molegameCount = newCount;
         notifyDataSetChanged();
     }
     @Override
@@ -76,19 +81,22 @@ public class MissionListAdapter extends ArrayAdapter<String> {
         if ("스쿼트".equals(currentItem)) {
             tvCount.setText(String.valueOf(squatCount));
         }
-        if ("푸쉬업".equals(currentItem)) {
+        else if ("푸쉬업".equals(currentItem)) {
             tvCount.setText(String.valueOf(pushUpCount));
         }
-        if ("영단어 발음하기".equals(currentItem)) {
+        else if ("영단어 발음하기".equals(currentItem)) {
             tvCount.setText(String.valueOf(speachWordsCount));
         }
-        if ("영문장 발음하기".equals(currentItem)) {
+        else if ("영문장 발음하기".equals(currentItem)) {
             tvCount.setText(String.valueOf(speachSentencesCount));
         }
-        if ("영단어 퀴즈퍼즐".equals(currentItem)) {
+        else if ("영단어 퀴즈퍼즐".equals(currentItem)) {
             tvCount.setText(String.valueOf(quizCount));
-        }if ("만보계".equals(currentItem)) {
-            tvCount.setText(String.valueOf(quizCount));
+        }
+        else if ("만보계".equals(currentItem)) {
+            tvCount.setText(String.valueOf(pedometerCount));
+        }else if ("두더지게임".equals(currentItem)) {
+            tvCount.setText(String.valueOf(molegameCount));
         }
         itemButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +118,9 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                     context.startActivity(intent);
                 }else if ("만보계".equals(currentItem)) {
                     Intent intent = new Intent(context, PedometerInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
+                    context.startActivity(intent);
+                }else if ("두더지게임".equals(currentItem)) {
+                    Intent intent = new Intent(context, MolegameInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
                     context.startActivity(intent);
                 }
             }

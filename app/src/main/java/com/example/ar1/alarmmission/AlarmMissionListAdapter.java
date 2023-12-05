@@ -29,6 +29,7 @@ public class AlarmMissionListAdapter extends ArrayAdapter<String> {
     private static final int REQUEST_CODE_Speachsentences = 4;
     private static final int REQUEST_CODE_Quiz = 5;
     private static final int REQUEST_CODE_Pedometer = 6;
+    private static final int REQUEST_CODE_Molegame = 7;
     private Activity activity;
     private Context context;
     SharedPreferences sharedPreferences;
@@ -76,6 +77,9 @@ public class AlarmMissionListAdapter extends ArrayAdapter<String> {
             }else if("만보계".equals(currentItem)){
                 Intent intent = new Intent(context, AlarmPedometerIntroductionActivity.class);
                 activity.startActivityForResult(intent, REQUEST_CODE_Pedometer);
+            }else if("두더지게임".equals(currentItem)){
+                Intent intent = new Intent(context, AlarmMoleGameIntroductionActivity.class);
+                activity.startActivityForResult(intent, REQUEST_CODE_Molegame);
             }
         });
 
