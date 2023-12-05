@@ -27,14 +27,12 @@ import okhttp3.Response;
 
 
 public class HourlyUpdateReceiver extends BroadcastReceiver {
-    private String userId;
     String currentDateAndTime;
 
     @SuppressLint({"RestrictedApi", "SuspiciousIndentation"})
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences preferences = context.getSharedPreferences("pedometer_preferences", Context.MODE_PRIVATE);
-        userId = preferences.getString("userId", ""); // 로그인한 유저 id 가져오기
 
         // 현재 날짜와 시간을 구합니다.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
@@ -60,6 +58,9 @@ public class HourlyUpdateReceiver extends BroadcastReceiver {
         Log.d(TAG, "만보계 정보 변화없음");
     }
     private void sendDataToServer(Context context, int steps, double calories, String activeTime) {
+        SharedPreferences userpreferences = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        String userId = userpreferences.getString("userId", ""); // 로그인한 유저 id 가져오기
+        Log.d(TAG, "만보계 서버전송 userId: "+userId);
         OkHttpClient client = new OkHttpClient();
         String url = "https://sw--zqbli.run.goorm.site/updatepedometer"; // 서버의 URL로 대체
 

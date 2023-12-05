@@ -76,8 +76,8 @@ public class Graph extends Fragment {
         // 아이템 리스트에 버튼에 표시할 내용 추가
         itemList.add("스쿼트");
         itemList.add("푸쉬업");
-        itemList.add("만보계(준비중)");
-        itemList.add("털걸이(준비중)");
+        itemList.add("만보계");
+        itemList.add("턱걸이(준비중)");
         itemList.add("영단어 발음하기");
         itemList.add("영문장 발음하기");
         itemList.add("영단어 퀴즈퍼즐");

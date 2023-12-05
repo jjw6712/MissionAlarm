@@ -10,15 +10,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import com.example.ar1.ui.graph.PedometerMarkerView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ar1.R;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -43,6 +49,7 @@ public class PedometerInfo extends AppCompatActivity {
     private OkHttpClient client;
     private BarChart chart;
     ImageButton ibBack;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +82,7 @@ public class PedometerInfo extends AppCompatActivity {
         String userId = prefs.getString("userId", null);
 
         Request request = new Request.Builder()
-                .url("https://sw--zqbli.run.goorm.site/getAllSquatMissionCount/" + userId)
+                .url("https://sw--zqbli.run.goorm.site/getAllPedometerData/" + userId)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -91,58 +98,57 @@ public class PedometerInfo extends AppCompatActivity {
                     String json = response.body().string();
                     try {
                         JSONObject jsonObject = new JSONObject(json);
-                        int todaySquatCount = jsonObject.optInt("todaySquatCount", 0);  // 0이 기본값입니다.
-                        int weeklySquatCount = jsonObject.optInt("weeklySquatCount", 0);
-                        int monthlySquatCount = jsonObject.optInt("monthlySquatCount", 0);
-
-                        JSONArray dailyCountsArray = jsonObject.getJSONArray("dailyCountsForMonth");
+                        JSONObject todayData = jsonObject.getJSONObject("today");
+                        JSONObject weeklyData = jsonObject.getJSONObject("weekly");
+                        JSONObject monthlyData = jsonObject.getJSONObject("monthly");
+                        JSONArray dailyDataArray = jsonObject.getJSONArray("daily");
 
                         runOnUiThread(() -> {
-                            tvTodayCount.setText(String.valueOf(todaySquatCount == 0 ? 0 : todaySquatCount));
-                            tvWeeklyCount.setText(String.valueOf(weeklySquatCount == 0 ? 0 : weeklySquatCount));
-                            tvMonthlyCount.setText(String.valueOf(monthlySquatCount == 0 ? 0 : monthlySquatCount));
-
+                            tvTodayCount.setText(String.valueOf(todayData.optInt("todayStepCount", 0)));
+                            tvWeeklyCount.setText(String.valueOf(weeklyData.optInt("weeklyStepCount", 0)));
+                            tvMonthlyCount.setText(String.valueOf(monthlyData.optInt("monthlyStepCount", 0)));
                             Calendar cal = Calendar.getInstance();
                             int lastDayOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                                    List<BarEntry> entries = new ArrayList<>();
+                                    for (int day = 1; day <= lastDayOfMonth; day++) {
+                                        int dailyStepCount = 0; // Initialize to 0
 
-                            List<BarEntry> entries = new ArrayList<>();
-                            for (int day = 1; day <= lastDayOfMonth; day++) {
-                                int dailySquatCount = 0; // Initialize to 0
+                                        for (int i = 0; i < dailyDataArray.length(); i++) {
+                                            JSONObject dailyData = null;
+                                            try {
+                                                dailyData = dailyDataArray.getJSONObject(i);
+                                            } catch (JSONException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            String dateStr = null;
+                                            try {
+                                                dateStr = dailyData.getString("date");
+                                            } catch (JSONException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            int dayOfMonth = Integer.parseInt(dateStr.split("-")[2].split("T")[0]);
 
-                                for (int i = 0; i < dailyCountsArray.length(); i++) {
-                                    JSONObject dailyCountObject = null; // JSON exception은 catch에서 처리하므로 제거
-                                    try {
-                                        dailyCountObject = dailyCountsArray.getJSONObject(i);
-                                    } catch (JSONException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    String dateStr = null; // JSON exception은 catch에서 처리하므로 제거
-                                    try {
-                                        dateStr = dailyCountObject.getString("date");
-                                    } catch (JSONException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    int dayFromServer = Integer.parseInt(dateStr.split("-")[2].split("T")[0]);
-
-                                    if (day == dayFromServer) {
-                                        try {
-                                            dailySquatCount = dailyCountObject.getInt("dailySquatCount"); // JSON exception은 catch에서 처리하므로 제거
-                                        } catch (JSONException e) {
-                                            throw new RuntimeException(e);
+                                            if (day == dayOfMonth) {
+                                                try {
+                                                    dailyStepCount = dailyData.getInt("dailyStepCount");
+                                                } catch (JSONException e) {
+                                                    throw new RuntimeException(e);
+                                                }
+                                                break;
+                                            }
                                         }
-                                        break;
+                                        entries.add(new BarEntry(day, dailyStepCount));
                                     }
-                                }
-                                entries.add(new BarEntry(day, dailySquatCount));  // 0도 추가됩니다.
-                            }
 
-                            BarDataSet dataSet = new BarDataSet(entries, "Squat Count");
+
+
+                            BarDataSet dataSet = new BarDataSet(entries, "Step Count");
                             dataSet.setColor(Color.parseColor("#FF00DD9B"));
                             dataSet.setBarBorderWidth(0.9f);
-                            dataSet.setValueTextColor(Color.parseColor("#FFFFFF"));  // Set to white to effectively hide it
-                            dataSet.setValueTextSize(0f);  // Set to 0 to hide it
+                            dataSet.setValueTextColor(Color.parseColor("#FFFFFF"));
+                            dataSet.setValueTextSize(0f);
                             dataSet.setHighlightEnabled(true);
-                            dataSet.setDrawValues(false); // Hide the original label above the bar
+                            dataSet.setDrawValues(false);
 
                             BarData barData = new BarData(dataSet);
                             barData.setBarWidth(0.9f);
@@ -154,13 +160,48 @@ public class PedometerInfo extends AppCompatActivity {
                             xAxis.setDrawGridLines(false);
                             xAxis.setGranularity(1f);
                             xAxis.setTextColor(Color.parseColor("#FF00DD9B"));
+// 차트에 MyMarkerView 설정
+                            // 마커 뷰 인스턴스 생성
+                            PedometerMarkerView markerView = new PedometerMarkerView(
+                                    PedometerInfo.this, R.layout.custom_marker_view, dailyDataArray);
+                            chart.setMarker(markerView);
+                            chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+                                @Override
+                                public void onValueSelected(Entry e, Highlight h) {
+                                    BarEntry barEntry = (BarEntry) e;
+                                    int dayOfMonth = (int) barEntry.getX();
+                                    String selectedDate = String.format("%d-%02d-%02d",
+                                            Calendar.getInstance().get(Calendar.YEAR),
+                                            Calendar.getInstance().get(Calendar.MONTH) + 1,
+                                            dayOfMonth);
 
-                            chart.setMarker(new MyMarkerView(getApplicationContext(), R.layout.custom_marker_view));  // Assume MyMarkerView is your custom marker view
+                                    for (int i = 0; i < dailyDataArray.length(); i++) {
+                                        try {
+                                            JSONObject dailyData = dailyDataArray.getJSONObject(i);
+                                            String dateStr = dailyData.getString("date").split("T")[0];
+                                            if (selectedDate.equals(dateStr)) {
+                                                // 여기서 MarkerView의 데이터를 업데이트하는 대신 차트에 highlight를 설정합니다.
+                                                chart.highlightValue(h);
+                                                break;
+                                            }
+                                        } catch (JSONException ex) {
+                                            // 예외 처리
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                }
+
+
+                                @Override
+                                public void onNothingSelected() {
+                                    // No action needed
+                                }
+                            });
 
                             chart.animateY(2000);
                             chart.invalidate();
                         });
-                    } catch (Exception e) {
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }

@@ -20,7 +20,9 @@ public class MyMarkerView extends MarkerView {
         // Find your layout components
         tvContent = findViewById(R.id.tvContent);
     }
-
+    public void updateData(String data) {
+        tvContent.setText(data);
+    }
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
 

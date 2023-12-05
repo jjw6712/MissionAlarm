@@ -27,6 +27,7 @@ public class MissionListAdapter extends ArrayAdapter<String> {
     private  int speachWordsCount = 0;
     private  int speachSentencesCount = 0;
     private  int quizCount = 0;
+    private  int pedometerCount = 0;
 
     public MissionListAdapter(Context context, List<String> items) {
         super(context, 0, items);
@@ -51,6 +52,10 @@ public class MissionListAdapter extends ArrayAdapter<String> {
         notifyDataSetChanged();
     }
     public void updateQuizCount(int newCount) {
+        this.quizCount = newCount;
+        notifyDataSetChanged();
+    }
+    public void updatePedometerCount(int newCount) {
         this.quizCount = newCount;
         notifyDataSetChanged();
     }
@@ -82,6 +87,8 @@ public class MissionListAdapter extends ArrayAdapter<String> {
         }
         if ("영단어 퀴즈퍼즐".equals(currentItem)) {
             tvCount.setText(String.valueOf(quizCount));
+        }if ("만보계".equals(currentItem)) {
+            tvCount.setText(String.valueOf(quizCount));
         }
         itemButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +107,9 @@ public class MissionListAdapter extends ArrayAdapter<String> {
                     context.startActivity(intent);
                 }else if ("영단어 퀴즈퍼즐".equals(currentItem)) {
                     Intent intent = new Intent(context, QuizInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
+                    context.startActivity(intent);
+                }else if ("만보계".equals(currentItem)) {
+                    Intent intent = new Intent(context, PedometerInfo.class); // 푸쉬업 정보 액티비티로 변경해야 함
                     context.startActivity(intent);
                 }
             }

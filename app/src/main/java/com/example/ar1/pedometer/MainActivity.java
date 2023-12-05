@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -69,9 +70,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
+        SharedPreferences preferences = getSharedPreferences("pedometer_preferences", MODE_PRIVATE);
         countTV = findViewById(R.id.cnt_txt);
         time = findViewById(R.id.steptime);
         cal = findViewById(R.id.stepcal);
+        mstepCount = preferences.getInt("mstepCount", 0);
+        stepCount = preferences.getInt("stepCount", 0);
+        cal.setText("0.00");
+        lastStepTime = 0;
+        totalActiveTime = preferences.getLong("totalActiveTime", 0);
+        activeHours = 0;
+        activeMinutes = 0;
+        activeSeconds = 0;
 
         // - TYPE_STEP_DETECTOR:  리턴 값이 무조건 1, 앱이 종료되면 다시 0부터 시작
         // - TYPE_STEP_COUNTER : 앱 종료와 관계없이 계속 기존의 값을 가지고 있다가 1씩 증가한 값을 리턴
@@ -219,15 +229,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void scheduleMidnightReset() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MidnightResetReceiver.class);
-        // PendingIntent.FLAG_IMMUTABLE 추가
+
+        // FLAG_IMMUTABLE 플래그 추가
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 2, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        // 현재 시간대를 한국 시간대로 설정
+        TimeZone timeZone = TimeZone.getTimeZone("Asia/Seoul");
+        Calendar calendar = Calendar.getInstance(timeZone);
+
+        // 날짜를 다음날로 설정하고 시간을 자정으로 설정
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
@@ -251,10 +266,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         editor.putFloat("calories", (float) calories);
         //editor.putString("activeTime", activeTime);
         editor.putLong("totalActiveTime", totalActiveTime);
+        editor.putInt("lastSentSteps", 0);
         editor.apply();
 
         countTV.setText(String.valueOf(mstepCount));
         //cal.setText(String.format("%.2f", totalCalories));
         time.setText("00:00:00");
     }
+
 }

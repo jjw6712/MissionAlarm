@@ -56,11 +56,17 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".pedometer.HourlyUpdateReceiver" />
-        <receiver android:name=".pedometer.MidnightResetReceiver"/>
+        <receiver android:name=".pedometer.MidnightResetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.yourapp.MIDNIGHT_RESET" />
+            </intent-filter>
+        </receiver>
         <service android:name=".pedometer.MyService"
             android:stopWithTask="false" />
 
-
+        <activity android:name=".ui.graph.PedometerInfo"/>
         <activity android:name=".ui.mission.PedometerIntroductionActivity"/>
         <activity android:name=".alarmmission.AlarmPedometerActivity"/>
         <activity android:name=".alarmmission.AlarmPedometerIntroductionActivity"/>
