@@ -7,6 +7,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,7 +33,10 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,11 +69,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
@@ -82,6 +89,23 @@ import okhttp3.Response;
 @OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
 
 public class MLkitMotionDemo extends AppCompatActivity{
+    // MediaPlayer 객체를 저장할 리스트
+    private List<MediaPlayer> activeMediaPlayers = new ArrayList<>();
+    private List<Integer> leftHandLandmarks = Arrays.asList(
+            PoseLandmark.LEFT_INDEX, PoseLandmark.LEFT_THUMB, PoseLandmark.LEFT_WRIST, PoseLandmark.LEFT_PINKY);
+
+    private List<Integer> rightHandLandmarks = Arrays.asList(
+            PoseLandmark.RIGHT_INDEX, PoseLandmark.RIGHT_THUMB, PoseLandmark.RIGHT_WRIST, PoseLandmark.RIGHT_PINKY);
+    private MediaPlayer flySoundMediaPlayer;
+    private MediaPlayer dieMediaPlayer;
+    ImageView flyImageView;
+    private int score = 0;
+
+    // TOUCH_THRESHOLD 상수 정의
+    private static final int TOUCH_THRESHOLD = 310; // 픽셀 단위, 이 값을 조정할 수 있습니다
+    InputImage image;
+    // 클래스 멤버 변수로 추가
+    private boolean isFlyCatching = false;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private static final int COUNTDOWN_DURATION = 10000; // 카운트 다운 시간 (밀리초)
     private static final int Reapit_Alarm_Count = 60000; //알람 반복 되기까지의 제한시간
@@ -127,8 +151,10 @@ public class MLkitMotionDemo extends AppCompatActivity{
     private Alarm alarm;
     private Handler stCountCheckHandler = new Handler();
     // 스트레칭 카운트가 증가하는 것을 감시하는 Runnable을 생성 스트레칭 카운트가 1분동안 증가하지 않으면 스트레칭 횟수를 추가해서 다 시 알람을 울림
+    FrameLayout frameLayout;
+    RelativeLayout relativeLayout;
 
-
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +174,9 @@ public class MLkitMotionDemo extends AppCompatActivity{
         sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         setMediaVolume(100);
+        relativeLayout = findViewById(R.id.relativeLayout);
+        frameLayout = findViewById(R.id.frameLayout); // FrameLayout 객체 찾기
+        ImageView flyImageView = new ImageView(this);
 
         // stCount 방향 감지 및 회전 설정
         final TextView textView = findViewById(R.id.tvSquatCount);
@@ -207,7 +236,11 @@ public class MLkitMotionDemo extends AppCompatActivity{
                 // Find the squatLayout and set its visibility
                 LinearLayout squatLayout = findViewById(R.id.squatLayout);
                 squatLayout.setVisibility(View.VISIBLE);
-
+                if (stretchingMode.equals("파리잡기게임")) {
+                    isFlyCatching = true;
+                    setupFlyCatchingGame();
+                    initializeMediaPlayers();
+                }
                 isCountdownFinished = true;
             }
         };
@@ -312,7 +345,7 @@ public class MLkitMotionDemo extends AppCompatActivity{
                     // 스트레칭 카운트가 목표치에 도달했는지 확인
                     if (stCount <= 0) {
                         // 'motion_end' 재생
-                            motionEndMediaPlayer = MediaPlayer.create(MLkitMotionDemo.this, R.raw.motion_end); // ActivityName은 현재 Activity의 이름으로 변경해야 합니다.
+                            motionEndMediaPlayer = MediaPlayer.create(MLkitMotionDemo.this, R.raw.mission_clear); // ActivityName은 현재 Activity의 이름으로 변경해야 합니다.
                         motionEndMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
@@ -385,6 +418,9 @@ public class MLkitMotionDemo extends AppCompatActivity{
             } else if (stretchingMode.equals("푸쉬업")) {
                 isPushingUp = true; // 푸쉬업 모드로 설정
                 stoption.setText("미션: 푸쉬업");
+            }else if (stretchingMode.equals("파리잡기게임")) {
+                //isFlyCatching = true;
+                stoption.setText("미션: 파리잡기게임");
             }
         }
 
@@ -418,6 +454,8 @@ public class MLkitMotionDemo extends AppCompatActivity{
                                         squat(pose);  // 스쿼트 모드인 경우 squat() 메서드 호출
                                     } else if(isPushingUp && isCountdownFinished) {
                                         pushup(pose);  // 푸쉬업 모드인 경우 pushup() 메서드 호출
+                                    }else if (isFlyCatching) {
+                                        performFlyCatching(pose);
                                     }
                                     drawPose(pose);
                                 })
@@ -533,7 +571,7 @@ public class MLkitMotionDemo extends AppCompatActivity{
         float leftAngle = (leftHip != null && leftKnee != null && leftAnkle != null) ? calculateAngle(leftHip, leftKnee, leftAnkle) : 0;
         float rightAngle = (rightHip != null && rightKnee != null && rightAnkle != null) ? calculateAngle(rightHip, rightKnee, rightAnkle) : 0;
 
-        if (leftAngle < 90 || rightAngle < 90) {
+        if (leftAngle < 100 || rightAngle < 100) {
             if (!isSquatting) {
                 isSquatting = true;
                 hipInitialPosition = Math.min(
@@ -609,6 +647,182 @@ public class MLkitMotionDemo extends AppCompatActivity{
             }
         }
     }
+
+    private void setupFlyCatchingGame() {
+
+        // 파리 이미지뷰 초기화
+        flyImageView = new ImageView(this);
+        flyImageView.setImageResource(R.drawable.fly_image); // 파리 이미지 설정
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(400, 400); // 파리 이미지 크기 설정
+        flyImageView.setLayoutParams(params);
+        frameLayout.addView(flyImageView); // RelativeLayout에 파리 이미지 추가
+
+        // 파리 움직임 시작
+        animateFly(flyImageView);
+    }
+    private void performFlyCatching(Pose pose) {
+        if (!areAllBodyLandmarksVisible(pose)) {
+            return; // 전신 랜드마크가 모두 화면에 없으면 점수 증가 및 재배치 하지 않음
+        }
+
+        for (int leftLandmarkId : leftHandLandmarks) {
+            for (int rightLandmarkId : rightHandLandmarks) {
+                PoseLandmark leftLandmark = pose.getPoseLandmark(leftLandmarkId);
+                PoseLandmark rightLandmark = pose.getPoseLandmark(rightLandmarkId);
+                if (leftLandmark != null && rightLandmark != null) {
+                    if (isHandsClapping(leftLandmark, rightLandmark, flyImageView)) {
+                        stCount--;
+                        runOnUiThread(() -> updateSquatCountWithAnimation(tvSquatCount, String.valueOf(stCount))); //애니매이션으로 stCount 업데이트
+                        flySoundMediaPlayer.stop();
+                        playDieSound();
+                        playDieAnimation(flyImageView);
+                        //frameLayout.removeView(flyImageView); // 현재 파리 제거
+                        setupFlyCatchingGame(); // 새로운 파리 생성 및 애니메이션 시작
+                        // 스트레칭 카운트가 목표치에 도달했는지 확인
+                        if (stCount <= 0) {
+                            // 'motion_end' 재생
+                            motionEndMediaPlayer = MediaPlayer.create(MLkitMotionDemo.this, R.raw.mission_clear); // ActivityName은 현재 Activity의 이름으로 변경해야 합니다.
+                            motionEndMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mp) {
+                                    setMediaVolume(AudioManager.USE_DEFAULT_STREAM_TYPE);
+                                    finish();
+                                    if (mediaPlayer != null) {
+                                        mediaPlayer.release();
+                                        mediaPlayer = null;
+                                    }
+                                    if (motionStartMediaPlayer != null) {
+                                        motionStartMediaPlayer.release();
+                                        motionStartMediaPlayer = null;
+                                    }
+                                    if (motionEndMediaPlayer != null) {
+                                        motionEndMediaPlayer.release();
+                                        motionEndMediaPlayer = null;
+                                    }
+
+                                    // flySoundMediaPlayer 해제
+                                    if (flySoundMediaPlayer != null) {
+                                        flySoundMediaPlayer.release();
+                                        flySoundMediaPlayer = null;
+                                    }
+
+                                    // dieMediaPlayer 해제
+                                    if (dieMediaPlayer != null) {
+                                        dieMediaPlayer.release();
+                                        dieMediaPlayer = null;
+                                    }
+                                }
+                            });
+                            motionEndMediaPlayer.start();
+                            stop_motion = true;
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isHandsClapping(PoseLandmark leftHand, PoseLandmark rightHand, ImageView fly) {
+        PointF leftPoint = leftHand.getPosition();
+        PointF rightPoint = rightHand.getPosition();
+        float flyX = fly.getX() + fly.getWidth() / 2;
+        float flyY = fly.getY() + fly.getHeight() / 2;
+
+        // 양손의 랜드마크가 파리 주변에 있는지 확인
+        boolean isLeftHandNearFly = Math.abs(leftPoint.x - flyX) < TOUCH_THRESHOLD && Math.abs(leftPoint.y - flyY) < TOUCH_THRESHOLD;
+        boolean isRightHandNearFly = Math.abs(rightPoint.x - flyX) < TOUCH_THRESHOLD && Math.abs(rightPoint.y - flyY) < TOUCH_THRESHOLD;
+
+        return isLeftHandNearFly && isRightHandNearFly;
+    }
+    private void animateFly(final ImageView fly) {
+        // 화면 경계를 약간 넘어가도록 위치 설정
+        int maxX = frameLayout.getWidth();
+        int maxY = frameLayout.getHeight();
+        int extraSpace = 50; // 화면 밖으로 나갈 수 있는 추가 공간
+        int x = new Random().nextInt(maxX + extraSpace * 2) - extraSpace;
+        int y = new Random().nextInt(maxY + extraSpace * 2) - extraSpace;
+
+        // 애니메이션 구성
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(fly, "x", fly.getX(), x);
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(fly, "y", fly.getY(), y);
+        animatorX.setDuration(2000);
+        animatorY.setDuration(2000);
+
+        // 애니메이터 셋 실행
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(animatorX, animatorY);
+        playFlySound(); // 파리 소리 재생
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animateFly(fly); // 애니메이션 끝나면 다시 시작
+            }
+        });
+        animatorSet.start();
+    }
+
+    private void playDieAnimation(ImageView fly) {
+        // 파리 이미지를 죽은 파리 이미지로 변경
+        fly.setImageResource(R.drawable.die_image);
+
+        // 바닥까지 떨어지는 애니메이션
+        float endY = frameLayout.getHeight(); // 화면의 바닥 위치
+        ObjectAnimator fallAnimator = ObjectAnimator.ofFloat(fly, "y", fly.getY(), endY);
+        fallAnimator.setDuration(1000); // 애니메이션 지속 시간 설정
+
+        fallAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                frameLayout.removeView(fly); // 애니메이션이 끝나면 파리 제거
+            }
+        });
+
+        fallAnimator.start();
+    }
+    // 전신 랜드마크가 모두 화면에 있는지 확인하는 메서드
+    private boolean areAllBodyLandmarksVisible(Pose pose) {
+        // 필요한 전신 랜드마크 리스트
+        int[] landmarks = {
+                PoseLandmark.LEFT_SHOULDER,
+                PoseLandmark.RIGHT_SHOULDER,
+                PoseLandmark.LEFT_HIP,
+                PoseLandmark.RIGHT_HIP,
+                // 필요에 따라 추가 랜드마크 포함
+        };
+
+        for (int landmarkId : landmarks) {
+            PoseLandmark landmark = pose.getPoseLandmark(landmarkId);
+            if (landmark == null || !areLandmarksInView(landmark)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<PoseLandmark> getFingerLandmarks(Pose pose) {
+        List<PoseLandmark> landmarks = new ArrayList<>();
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.LEFT_INDEX));
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.LEFT_THUMB));
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.LEFT_WRIST));
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.LEFT_PINKY));
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.RIGHT_INDEX));
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.RIGHT_THUMB));
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.RIGHT_WRIST));
+        landmarks.add(pose.getPoseLandmark(PoseLandmark.RIGHT_PINKY));
+        return landmarks;
+    }
+
+    private boolean isFlyCaught(PointF fingerPoint, ImageView fly) {
+        float flyX = fly.getX();
+        float flyY = fly.getY();
+        float fingerX = fingerPoint.x;
+        float fingerY = fingerPoint.y;
+
+        // 충돌 검사
+        return Math.abs(flyX - fingerX) < TOUCH_THRESHOLD && Math.abs(flyY - fingerY) < TOUCH_THRESHOLD;
+    }
     private float calculateAngle(PoseLandmark firstPoint, PoseLandmark midPoint, PoseLandmark lastPoint) {
         if (firstPoint == null || midPoint == null || lastPoint == null) {
             return 0.0f; // 또는 적절한 기본값을 반환하세요.
@@ -663,16 +877,22 @@ public class MLkitMotionDemo extends AppCompatActivity{
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(runnable);
-        if(stop_motion ==true)
-            SendToServer();
 
+        // flySoundMediaPlayer 정지
+        if (flySoundMediaPlayer != null && flySoundMediaPlayer.isPlaying()) {
+            flySoundMediaPlayer.pause();
+        }
+
+        if (stop_motion == true) {
+            SendToServer();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        // MediaPlayer를 해제합니다.
+        // 기존 MediaPlayer 해제
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
@@ -684,6 +904,18 @@ public class MLkitMotionDemo extends AppCompatActivity{
         if (motionEndMediaPlayer != null) {
             motionEndMediaPlayer.release();
             motionEndMediaPlayer = null;
+        }
+
+        // flySoundMediaPlayer 해제
+        if (flySoundMediaPlayer != null) {
+            flySoundMediaPlayer.release();
+            flySoundMediaPlayer = null;
+        }
+
+        // dieMediaPlayer 해제
+        if (dieMediaPlayer != null) {
+            dieMediaPlayer.release();
+            dieMediaPlayer = null;
         }
     }
     private void SendToServer() { // 서버로 데이터 보내기
@@ -735,5 +967,35 @@ public class MLkitMotionDemo extends AppCompatActivity{
             }
         });
     }
+    private void initializeMediaPlayers() {
+        flySoundMediaPlayer = MediaPlayer.create(this, R.raw.fly_sound);
+        dieMediaPlayer = MediaPlayer.create(this, R.raw.die);
+    }
 
+    private void playFlySound() {
+        // 파리 소리 재생
+        if (flySoundMediaPlayer == null || !flySoundMediaPlayer.isPlaying()) {
+            flySoundMediaPlayer = MediaPlayer.create(this, R.raw.fly_sound);
+            flySoundMediaPlayer.start();
+            flySoundMediaPlayer.setLooping(true); // 소리 반복 재생
+        }
+    }
+
+    private void playDieSound() {
+        // 새로운 MediaPlayer 인스턴스 생성 및 재생
+        MediaPlayer tempMediaPlayer = MediaPlayer.create(this, R.raw.die);
+        tempMediaPlayer.start();
+
+        // 리스트에 MediaPlayer 추가
+        activeMediaPlayers.add(tempMediaPlayer);
+
+        // 재생이 끝나면 자원 해제 및 리스트에서 제거
+        tempMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+                activeMediaPlayers.remove(mp);
+            }
+        });
+    }
 }

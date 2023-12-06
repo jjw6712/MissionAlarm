@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/black">
+    <ImageButton
+        android:id="@+id/btBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/ic_back_white"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="파리잡기게임"
+        android:gravity="center"
+        android:textSize="35dp"
+        android:textColor="@color/white"/>
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_below="@id/title"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/squatDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/videoView"
+        android:layout_marginTop="21dp"
+        android:lineSpacingExtra="8dp"
+        android:text="1. 머리부터 무릎까지 상체를 전면 카메라에 위치시킵니다.
+        \n2. 파리는 무조건 양 손바닥으로 손벽을 쳐서 잡을 수 있습니다.
+        \n3. 설정한 횟수만큼 파리를 잡으면 게임이 종료됩니다.
+        "
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/startSquatMissionButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:text="파리잡기게임 시작하기"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:backgroundTint="#FF00DD9B"/>
+
+</RelativeLayout>

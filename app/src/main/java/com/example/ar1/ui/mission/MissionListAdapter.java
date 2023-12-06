@@ -63,6 +63,9 @@ public class MissionListAdapter extends ArrayAdapter<String> {
             } else if ("푸쉬업".equals(currentItem)) {
                 Intent intent = new Intent(context, PushupIntroductionActivity.class);
                 context.startActivity(intent);
+            } else if ("파리잡기게임".equals(currentItem)) {
+                Intent intent = new Intent(context, FlyingGameIntroductionActivity.class);
+                context.startActivity(intent);
             }else if("영단어 발음하기".equals(currentItem)){
                 Intent intent = new Intent(context, SpeachWordsIntroductionActivity.class);
                 context.startActivity(intent);
