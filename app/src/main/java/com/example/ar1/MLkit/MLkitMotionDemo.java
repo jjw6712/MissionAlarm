@@ -649,16 +649,29 @@ public class MLkitMotionDemo extends AppCompatActivity{
     }
 
     private void setupFlyCatchingGame() {
-
         // 파리 이미지뷰 초기화
         flyImageView = new ImageView(this);
-        flyImageView.setImageResource(R.drawable.fly_image); // 파리 이미지 설정
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(400, 400); // 파리 이미지 크기 설정
+        flyImageView.setImageResource(R.drawable.fly_image);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(400, 400);
         flyImageView.setLayoutParams(params);
-        frameLayout.addView(flyImageView); // RelativeLayout에 파리 이미지 추가
 
-        // 파리 움직임 시작
-        animateFly(flyImageView);
+        // 파리의 초기 위치를 무작위로 설정
+        placeFlyRandomly(flyImageView);
+
+        frameLayout.addView(flyImageView); // RelativeLayout에 파리 이미지 추가
+        animateFly(flyImageView); // 파리 움직임 시작
+    }
+
+    private void placeFlyRandomly(ImageView fly) {
+        // 화면 크기를 기준으로 랜덤한 위치 결정
+        int maxX = frameLayout.getWidth() - fly.getWidth();
+        int maxY = frameLayout.getHeight() - fly.getHeight();
+        int randomX = new Random().nextInt(maxX);
+        int randomY = new Random().nextInt(maxY);
+
+        // 파리의 위치 설정
+        fly.setX(randomX);
+        fly.setY(randomY);
     }
     private void performFlyCatching(Pose pose) {
         if (!areAllBodyLandmarksVisible(pose)) {
