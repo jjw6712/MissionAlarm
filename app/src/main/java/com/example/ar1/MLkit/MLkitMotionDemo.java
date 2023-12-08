@@ -891,10 +891,32 @@ public class MLkitMotionDemo extends AppCompatActivity{
         super.onPause();
         handler.removeCallbacks(runnable);
 
-        // flySoundMediaPlayer 정지
-        if (flySoundMediaPlayer != null && flySoundMediaPlayer.isPlaying()) {
-            flySoundMediaPlayer.pause();
+        // flySoundMediaPlayer 정지 및 해제
+        if (flySoundMediaPlayer != null) {
+            if (flySoundMediaPlayer.isPlaying()) {
+                flySoundMediaPlayer.stop();
+            }
+            flySoundMediaPlayer.release();
+            flySoundMediaPlayer = null;
         }
+
+        // dieMediaPlayer 정지 및 해제
+        if (dieMediaPlayer != null) {
+            if (dieMediaPlayer.isPlaying()) {
+                dieMediaPlayer.stop();
+            }
+            dieMediaPlayer.release();
+            dieMediaPlayer = null;
+        }
+
+        // 기타 MediaPlayer 인스턴스 정지 및 해제
+        for (MediaPlayer mediaPlayer : activeMediaPlayers) {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+            }
+        }
+        activeMediaPlayers.clear();
 
         if (stop_motion == true) {
             SendToServer();
@@ -904,7 +926,7 @@ public class MLkitMotionDemo extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        flySoundMediaPlayer.setLooping(false); // 소리 반복 재생
         // 기존 MediaPlayer 해제
         if (mediaPlayer != null) {
             mediaPlayer.release();

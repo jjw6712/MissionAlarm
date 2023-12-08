@@ -29,7 +29,7 @@ import com.example.ar1.pedometer.MainActivity;
 
 public class FlyingGameIntroductionActivity extends AppCompatActivity {
     ImageButton btBack;
-
+    VideoView videoView;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class FlyingGameIntroductionActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(android.R.color.black));
         btBack = findViewById(R.id.btBack);
-        VideoView videoView = findViewById(R.id.videoView);
+        videoView = findViewById(R.id.videoView);
         String videoFileName = "flying_game"; // 동영상 파일 이름
 
         int videoResId = getResources().getIdentifier(videoFileName, "raw", getPackageName());
@@ -68,6 +68,7 @@ public class FlyingGameIntroductionActivity extends AppCompatActivity {
         btBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                videoView.pause();
                 finish();
             }
         });
@@ -114,6 +115,7 @@ public class FlyingGameIntroductionActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MLkitMotionDemo.class);
         startActivity(intent);
         finish();
+        videoView.pause();
     }
 
     InputFilter inputFilter = new InputFilter() {

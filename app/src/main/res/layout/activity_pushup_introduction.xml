@@ -18,19 +18,19 @@
         android:gravity="center"
         android:textSize="35dp"
         android:textColor="@color/white"/>
-    <ImageView
-        android:id="@+id/squatGifImageView"
+    <VideoView
+        android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         android:layout_below="@id/title"
         android:layout_marginTop="20dp"
-        android:src="@drawable/pushup" />
+        />
 
     <TextView
         android:id="@+id/squatDescriptionTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/squatGifImageView"
+        android:layout_below="@id/videoView"
         android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:textColor="@color/white"
